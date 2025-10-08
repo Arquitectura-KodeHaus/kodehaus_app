@@ -1,0 +1,68 @@
+name: Frontend CI/CD - GCP
+
+on:
+  push:
+    paths:
+      - 'stocks-frontend/**'
+      - '.github/workflows/frontend.yml'
+    branches:
+      - main
+
+env:
+  GCP_PROJECT_ID: kodehaus-prod-474304
+  GCP_REGION: us-central1
+  GCS_BUCKET_NAME: stocks-frontend-bucket  # Nombre de tu bucket
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: stocks-frontend
+        run: npm ci
+
+      - name: Build Angular app
+        working-directory: stocks-frontend
+        run: |
+          npm run build -- --configuration production
+          
+      - name: Inject environment variables
+        working-directory: stocks-frontend
+        env:
+          API_URL: ${{ secrets.BACKEND_URL }}
+        run: |
+          node replace-env.js
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Upload to Cloud Storage
+        run: |
+          gsutil -m rsync -r -c -d ./stocks-frontend/dist/stocks-frontend gs://${{ env.GCS_BUCKET_NAME }}
+
+      - name: Make bucket public and set website configuration
+        run: |
+          gsutil iam ch allUsers:objectViewer gs://${{ env.GCS_BUCKET_NAME }}
+          gsutil web set -m index.html -e index.html gs://${{ env.GCS_BUCKET_NAME }}
+
+      - name: Set Cache-Control metadata
+        run: |
+          gsutil -m setmeta -h "Cache-Control:public, max-age=3600" gs://${{ env.GCS_BUCKET_NAME }}/**
+
+      - name: Get Website URL
+        run: |
+          echo "Frontend deployed at: https://storage.googleapis.com/${{ env.GCS_BUCKET_NAME }}/index.html"
