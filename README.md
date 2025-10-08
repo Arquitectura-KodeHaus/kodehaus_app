@@ -18,11 +18,6 @@ El deployment es automático mediante GitHub Actions:
 - Push a `main` en `stocks-backend/` → Deploy a Cloud Run
 - Push a `main` en `stocks-frontend/` → Deploy a Cloud Storage
 
-## 🔗 URLs
-
-- **Backend API**: https://stocks-backend-service-XXXXX-uc.a.run.app
-- **Frontend**: https://storage.googleapis.com/stocks-frontend-bucket/index.html
-
 ## 🛠️ Desarrollo Local
 
 ### Backend
