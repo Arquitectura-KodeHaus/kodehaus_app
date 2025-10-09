@@ -44,16 +44,6 @@ Antes de iniciar el desarrollo, cada persona del equipo debe contar con:
    | `SPRING_DATASOURCE_PASSWORD` | Contraseña de la base. |
 
 ### 🔐 Credenciales disponibles
-
-#### Producción (no usar para pruebas locales)
-```bash
-export APP_ENV=prod
-export SERVER_PORT=8083
-export SPRING_DATASOURCE_URL="jdbc:postgresql://104.155.191.106:5432/appdb"
-export SPRING_DATASOURCE_USERNAME=postgres
-export SPRING_DATASOURCE_PASSWORD='Pr0d-ChangeMe!'
-```
-
 #### Sandbox de pruebas (recomendado para desarrollo y QA)
 ```bash
 export APP_ENV=test
