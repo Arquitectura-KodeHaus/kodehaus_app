@@ -93,18 +93,13 @@ El backend expone la API REST para gestionar stocks y un endpoint `/health` que 
 
 1. Asegúrate de tener la rama actualizada con `main` (`git pull origin main`).
 2. Desarrolla tus cambios en tu rama feature y agrega tests si corresponde.
-3. Ejecuta verificaciones locales:
-   ```bash
-   cd stocks-backend && ./mvnw test
-   cd ../stocks-frontend && npm run lint && npm run test
-   ```
-4. Haz commit de tus cambios y sube tu rama:
+3. Haz commit de tus cambios y sube tu rama:
    ```bash
    git add .
    git commit -m "feat: describe tu cambio"
    git push origin feature/<mi-feature>
    ```
-5. Crea un Pull Request en GitHub. El pipeline de CI/CD validará el `/health` y los builds.
+4. Crea un Pull Request en GitHub. El pipeline de CI/CD validará el `/health` y los builds.
 
 ## 🚀 Deployment
 
@@ -120,5 +115,3 @@ Cada despliegue usa el endpoint `/health` para validar la aplicación antes de e
 - Mantén las credenciales seguras; no las expongas en issues ni commits.
 - Usa el sandbox `test` para experimentar sin afectar producción.
 - Documenta en el PR cualquier configuración adicional que requiera el equipo.
-
-¡Listo! Con estas instrucciones, cada desarrollador puede configurar su entorno rápidamente, crear su rama de trabajo y validar la aplicación end-to-end.
