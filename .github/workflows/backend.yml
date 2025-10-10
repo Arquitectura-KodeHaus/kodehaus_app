@@ -67,6 +67,7 @@ jobs:
             --image "${IMAGE_URI_DIGEST}" \
             --platform managed \
             --allow-unauthenticated \
+            --service-account "run-backend-sa@${{ env.PROJECT_ID }}.iam.gserviceaccount.com" \
             --memory 1Gi --cpu 1 --max-instances 10 \
             --set-env-vars "SPRING_PROFILES_ACTIVE=prod" \
             --set-secrets "SPRING_DATASOURCE_URL=DB_URL:latest,SPRING_DATASOURCE_USERNAME=DB_USERNAME:latest,SPRING_DATASOURCE_PASSWORD=DB_PASSWORD:latest"
