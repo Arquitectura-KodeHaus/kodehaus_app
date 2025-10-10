@@ -2,66 +2,78 @@ name: Backend CI/CD - GCP
 
 on:
   push:
+    branches: [ main ]
     paths:
-      - 'stocks-backend/**'
+      - 'backend/**'
       - '.github/workflows/backend.yml'
-    branches:
-      - main
 
 env:
-  GCP_PROJECT_ID: kodehaus-prod-474304 
-  GCP_REGION: us-central1
-  ARTIFACT_REGISTRY_REPO: stocks-backend
-  CLOUD_RUN_SERVICE: stocks-backend-service
+  PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+  REGION: ${{ vars.GCP_REGION }}
+  AR_REPO: ${{ vars.ARTIFACT_REGISTRY_REPO || 'stocks-backend' }}
+  SERVICE: stocks-backend-service
   IMAGE_NAME: stocks-backend
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Authenticate to Google Cloud
+      # Si tu Dockerfile hace el build, puedes omitir Maven/Gradle aquí
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      # Opcional si quieres precalentar el jar antes del docker build
+      - name: Build jar (optional)
+        working-directory: backend
+        run: |
+          if [ -f mvnw ]; then ./mvnw -B -DskipTests package || true; fi
+
+      - name: Auth to GCP (WIF)
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_SA_EMAIL }}
 
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
+      - uses: google-github-actions/setup-gcloud@v2
 
-      - name: Configure Docker to use gcloud as credential helper
+      - name: Configure Docker to Artifact Registry
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+
+      - name: Build & Push image
+        working-directory: backend
+        env:
+          IMAGE_TAG: ${{ github.sha }}
         run: |
-          gcloud auth configure-docker ${{ env.GCP_REGION }}-docker.pkg.dev
-
-      - name: Build Docker image
-        run: |
-          docker build -t ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REGISTRY_REPO }}/${{ env.IMAGE_NAME }}:latest \
-            -t ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REGISTRY_REPO }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
-            ./stocks-backend
-
-      - name: Push Docker image to Artifact Registry
-        run: |
-          docker push ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REGISTRY_REPO }}/${{ env.IMAGE_NAME }}:latest
-          docker push ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REGISTRY_REPO }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          IMAGE_URI="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.AR_REPO }}/${{ env.IMAGE_NAME }}:${IMAGE_TAG}"
+          docker build -t "$IMAGE_URI" .
+          docker push "$IMAGE_URI"
+          DIGEST=$(gcloud artifacts docker images describe "$IMAGE_URI" --format='value(image_summary.digest)')
+          echo "IMAGE_DIGEST=$DIGEST" >> $GITHUB_ENV
+          echo "IMAGE_URI_DIGEST=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.AR_REPO }}/${{ env.IMAGE_NAME }}@${DIGEST}" >> $GITHUB_ENV
 
       - name: Deploy to Cloud Run
         run: |
-          gcloud run deploy ${{ env.CLOUD_RUN_SERVICE }} \
-            --image ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REGISTRY_REPO }}/${{ env.IMAGE_NAME }}:latest \
-            --region ${{ env.GCP_REGION }} \
+          gcloud run deploy "${{ env.SERVICE }}" \
+            --region "${{ env.REGION }}" \
+            --image "${IMAGE_URI_DIGEST}" \
             --platform managed \
             --allow-unauthenticated \
-            --set-env-vars="SPRING_DATASOURCE_URL=${{ secrets.DATABASE_URL }},SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USERNAME }},SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }}" \
-            --memory 1Gi \
-            --cpu 1 \
-            --max-instances 10
+            --memory 1Gi --cpu 1 --max-instances 10 \
+            --set-env-vars "SPRING_PROFILES_ACTIVE=prod" \
+            --set-secrets "SPRING_DATASOURCE_URL=DB_URL:latest,SPRING_DATASOURCE_USERNAME=DB_USERNAME:latest,SPRING_DATASOURCE_PASSWORD=DB_PASSWORD:latest"
 
-      - name: Get Cloud Run URL
+      - name: Backend URL
+        id: url
         run: |
-          SERVICE_URL=$(gcloud run services describe ${{ env.CLOUD_RUN_SERVICE }} \
-            --region ${{ env.GCP_REGION }} \
-            --format 'value(status.url)')
-          echo "Backend deployed at: $SERVICE_URL"
-          echo "BACKEND_URL=$SERVICE_URL" >> $GITHUB_ENV
+          URL=$(gcloud run services describe "${{ env.SERVICE }}" --region "${{ env.REGION }}" --format='value(status.url)')
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "Backend deployed at: $URL"
