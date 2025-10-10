@@ -20,22 +20,19 @@ jobs:
     permissions:
       contents: read
       id-token: write
+    defaults:
+      run:
+        shell: bash
+        working-directory: stocks-backend
 
     steps:
       - uses: actions/checkout@v4
 
-      # Si tu Dockerfile hace el build, puedes omitir Maven/Gradle aquí
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
-
-      # Opcional si quieres precalentar el jar antes del docker build
-      - name: Build jar (optional)
-        working-directory: stocks-backend
-        run: |
-          if [ -f mvnw ]; then ./mvnw -B -DskipTests package || true; fi
 
       - name: Auth to GCP (WIF)
         uses: google-github-actions/auth@v2
@@ -46,10 +43,15 @@ jobs:
       - uses: google-github-actions/setup-gcloud@v2
 
       - name: Configure Docker to Artifact Registry
+        # puede correr desde cualquier carpeta
         run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+        working-directory: .
+
+      - name: Build jar (optional)
+        run: |
+          if [ -f mvnw ]; then ./mvnw -B -DskipTests package; fi
 
       - name: Build & Push image
-        working-directory: backend
         env:
           IMAGE_TAG: ${{ github.sha }}
         run: |
@@ -57,10 +59,10 @@ jobs:
           docker build -t "$IMAGE_URI" .
           docker push "$IMAGE_URI"
           DIGEST=$(gcloud artifacts docker images describe "$IMAGE_URI" --format='value(image_summary.digest)')
-          echo "IMAGE_DIGEST=$DIGEST" >> $GITHUB_ENV
           echo "IMAGE_URI_DIGEST=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.AR_REPO }}/${{ env.IMAGE_NAME }}@${DIGEST}" >> $GITHUB_ENV
 
       - name: Deploy to Cloud Run
+        working-directory: .
         run: |
           gcloud run deploy "${{ env.SERVICE }}" \
             --region "${{ env.REGION }}" \
@@ -71,10 +73,3 @@ jobs:
             --memory 1Gi --cpu 1 --max-instances 10 \
             --set-env-vars "SPRING_PROFILES_ACTIVE=prod" \
             --set-secrets "SPRING_DATASOURCE_URL=DB_URL:latest,SPRING_DATASOURCE_USERNAME=DB_USERNAME:latest,SPRING_DATASOURCE_PASSWORD=DB_PASSWORD:latest"
-
-      - name: Backend URL
-        id: url
-        run: |
-          URL=$(gcloud run services describe "${{ env.SERVICE }}" --region "${{ env.REGION }}" --format='value(status.url)')
-          echo "url=$URL" >> "$GITHUB_OUTPUT"
-          echo "Backend deployed at: $URL"
