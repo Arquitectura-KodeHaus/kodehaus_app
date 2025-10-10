@@ -1,26 +1,24 @@
-# Stage 1: Build
+# syntax=docker/dockerfile:1
+
+# Etapa de build con Maven y JDK 21
 FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /app
 
+# Copia solo el pom y baja dependencias (mejora el cache)
 COPY pom.xml .
-COPY mvnw .
-COPY .mvn .mvn
+RUN mvn -B -q -DskipTests dependency:go-offline
+
+# Copia el código y construye
 COPY src ./src
+RUN mvn -B -DskipTests package
 
-RUN ./mvnw clean package -DskipTests
-
-# Stage 2: Runtime
+# Etapa runtime con JRE 21
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
-RUN addgroup -S spring && adduser -S spring -G spring
-USER spring:spring
-
-COPY --from=build /app/target/*.jar app.jar
+# Copia el jar construido (toma el único .jar del target)
+COPY --from=build /app/target/*.jar /app/app.jar
 
 EXPOSE 8080
-
-ENV JAVA_OPTS="-Xmx512m -Xms256m"
-ENV SERVER_PORT=8080
-
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -Dserver.port=${SERVER_PORT} -jar app.jar"]
+ENV JAVA_OPTS=""
+ENTRYPOINT ["sh","-c","java $JAVA_OPTS -jar /app/app.jar"]
