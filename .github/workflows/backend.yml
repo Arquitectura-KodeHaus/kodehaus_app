@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'backend/**'
+      - 'stocks-backend/**'
       - '.github/workflows/backend.yml'
 
 env:
@@ -33,7 +33,7 @@ jobs:
 
       # Opcional si quieres precalentar el jar antes del docker build
       - name: Build jar (optional)
-        working-directory: backend
+        working-directory: stocks-backend
         run: |
           if [ -f mvnw ]; then ./mvnw -B -DskipTests package || true; fi
 
