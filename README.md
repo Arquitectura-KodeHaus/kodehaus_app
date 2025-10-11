@@ -43,16 +43,6 @@ Antes de iniciar el desarrollo, cada persona del equipo debe contar con:
    | `SPRING_DATASOURCE_USERNAME` | Usuario de la base. |
    | `SPRING_DATASOURCE_PASSWORD` | Contraseña de la base. |
 
-### 🔐 Credenciales disponibles
-#### Sandbox de pruebas (recomendado para desarrollo y QA)
-```bash
-export APP_ENV=test
-export SERVER_PORT=8082
-export SPRING_DATASOURCE_URL="jdbc:postgresql://35.222.229.216:5432/appdb"
-export SPRING_DATASOURCE_USERNAME=postgres
-export SPRING_DATASOURCE_PASSWORD='T3st-ChangeMe!'
-```
-
 > 💡 Puedes guardar estas variables en un archivo `stocks-backend/.env` y cargarlas con herramientas como [direnv](https://direnv.net/) o `source .env`.
 
 ## 🛠️ Desarrollo local
