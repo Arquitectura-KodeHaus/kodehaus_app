@@ -14,6 +14,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOriginPatterns(
                     "http://localhost:*",
                     "https://storage.googleapis.com",
+                    "https://stocks-frontend-bucket.storage.googleapis.com",
                     "https://*.storage.googleapis.com"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD")
