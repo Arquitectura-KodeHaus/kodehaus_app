@@ -2,67 +2,139 @@ name: Frontend CI/CD - GCP
 
 on:
   push:
+    branches: [ main ]
     paths:
       - 'stocks-frontend/**'
       - '.github/workflows/frontend.yml'
-    branches:
-      - main
 
 env:
-  GCP_PROJECT_ID: kodehaus-prod-474304
-  GCP_REGION: us-central1
-  GCS_BUCKET_NAME: stocks-frontend-bucket  # Nombre de tu bucket
+  PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+  REGION: ${{ vars.GCP_REGION }}
+  BUCKET_NAME: stocks-frontend-bucket
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    
+    defaults:
+      run:
+        working-directory: stocks-frontend
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: stocks-frontend/package-lock.json
 
       - name: Install dependencies
-        working-directory: stocks-frontend
         run: npm ci
 
       - name: Build Angular app
-        working-directory: stocks-frontend
-        run: |
-          npm run build -- --configuration production
-          
-      - name: Inject environment variables
-        working-directory: stocks-frontend
+        run: npm run build -- --configuration production
+
+      - name: Replace environment variables
         env:
-          API_URL: ${{ secrets.BACKEND_URL }}
+          API_URL: ${{ vars.BACKEND_URL }}
         run: |
           node replace-env.js
+          echo "✅ Environment variables replaced"
+          echo "API_URL set to: $API_URL"
 
-      - name: Authenticate to Google Cloud
+      - name: Verify build output
+        run: |
+          ls -la dist/stocks-frontend/
+          echo "Checking for API_URL replacement..."
+          grep -r "stocks-backend-service" dist/stocks-frontend/ || echo "No hardcoded localhost found - Good!"
+
+      - name: Auth to GCP (Workload Identity Federation)
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_SA_EMAIL }}
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
       - name: Upload to Cloud Storage
+        working-directory: .
         run: |
-          gsutil -m rsync -r -c -d ./stocks-frontend/dist/stocks-frontend gs://${{ env.GCS_BUCKET_NAME }}
+          echo "📦 Uploading files to gs://${{ env.BUCKET_NAME }}/"
+          gsutil -m rsync -r -c -d stocks-frontend/dist/stocks-frontend gs://${{ env.BUCKET_NAME }}
+          echo "✅ Upload complete"
 
-      - name: Make bucket public and set website configuration
+      - name: Configure bucket for website hosting
+        working-directory: .
         run: |
-          gsutil iam ch allUsers:objectViewer gs://${{ env.GCS_BUCKET_NAME }}
-          gsutil web set -m index.html -e index.html gs://${{ env.GCS_BUCKET_NAME }}
+          echo "🌐 Configuring bucket as website..."
+          
+          # Hacer el bucket público
+          gsutil iam ch allUsers:objectViewer gs://${{ env.BUCKET_NAME }}
+          
+          # Configurar como website
+          gsutil web set -m index.html -e index.html gs://${{ env.BUCKET_NAME }}
+          
+          # Configurar CORS
+          cat > cors.json << 'EOF'
+          [
+            {
+              "origin": ["*"],
+              "method": ["GET", "HEAD"],
+              "responseHeader": ["Content-Type", "Access-Control-Allow-Origin"],
+              "maxAgeSeconds": 3600
+            }
+          ]
+          EOF
+          gsutil cors set cors.json gs://${{ env.BUCKET_NAME }}
+          rm cors.json
+          
+          echo "✅ Bucket configured"
 
-      - name: Set Cache-Control metadata
+      - name: Set Cache-Control headers
+        working-directory: .
         run: |
-          gsutil -m setmeta -h "Cache-Control:public, max-age=3600" gs://${{ env.GCS_BUCKET_NAME }}/**
+          echo "⚡ Setting cache headers..."
+          
+          # HTML sin caché (para siempre obtener la última versión)
+          gsutil -m setmeta -h "Cache-Control:no-cache, no-store, must-revalidate" \
+            gs://${{ env.BUCKET_NAME }}/index.html
+          
+          # JS/CSS con caché largo (tienen hash en el nombre)
+          gsutil -m setmeta -h "Cache-Control:public, max-age=31536000, immutable" \
+            "gs://${{ env.BUCKET_NAME }}/*.js" 2>/dev/null || true
+          gsutil -m setmeta -h "Cache-Control:public, max-age=31536000, immutable" \
+            "gs://${{ env.BUCKET_NAME }}/*.css" 2>/dev/null || true
+          
+          # Favicon y assets con caché medio
+          gsutil -m setmeta -h "Cache-Control:public, max-age=86400" \
+            gs://${{ env.BUCKET_NAME }}/favicon.ico 2>/dev/null || true
+          gsutil -m setmeta -h "Cache-Control:public, max-age=86400" \
+            "gs://${{ env.BUCKET_NAME }}/assets/**" 2>/dev/null || true
+          
+          echo "✅ Cache headers set"
 
-      - name: Get Website URL
+      - name: Display deployment info
+        working-directory: .
         run: |
-          echo "Frontend deployed at: https://storage.googleapis.com/${{ env.GCS_BUCKET_NAME }}/index.html"
+          echo ""
+          echo "🎉 =================================="
+          echo "   Frontend Deployed Successfully!"
+          echo "   =================================="
+          echo ""
+          echo "📍 Access your app at:"
+          echo "   https://storage.googleapis.com/${{ env.BUCKET_NAME }}/index.html"
+          echo ""
+          echo "🌐 Alternative URLs:"
+          echo "   https://${{ env.BUCKET_NAME }}.storage.googleapis.com/index.html"
+          echo ""
+          echo "🔗 Backend API:"
+          echo "   ${{ vars.BACKEND_URL }}"
+          echo ""
+          echo "✅ Build completed at: $(date)"
