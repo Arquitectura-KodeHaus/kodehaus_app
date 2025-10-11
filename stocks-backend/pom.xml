@@ -41,7 +41,15 @@
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
-        
+             
+         <!-- Cloud SQL PostgreSQL Socket Factory -->
+         <dependency>
+             <groupId>com.google.cloud.sql</groupId>
+             <artifactId>postgres-socket-factory</artifactId>
+             <version>1.18.1</version>
+             <scope>runtime</scope>
+         </dependency>
+             
         <!-- Spring Boot Actuator -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
