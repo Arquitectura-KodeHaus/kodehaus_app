@@ -21,7 +21,7 @@ jobs:
     
     defaults:
       run:
-        working-directory: stocks-frontend
+        working-directory: stocks-frontend 
 
     steps:
       - name: Checkout code
@@ -38,7 +38,7 @@ jobs:
         run: npm ci
 
       - name: Build Angular app
-        run: npm run build -- --configuration production
+        run: npm run build -- --configuration production --base-href=/
 
       - name: Replace environment variables
         env:
