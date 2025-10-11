@@ -1,7 +1,8 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { AppComponent } from './app/app.component';
+import { importProvidersFrom } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
+import { DashboardComponent } from './app/dashboard/dashboard.component';
 
-bootstrapApplication(AppComponent, {
-  providers: [provideHttpClient(withInterceptorsFromDi())]
-}).catch(err => console.error(err));
+bootstrapApplication(DashboardComponent, {
+  providers: [importProvidersFrom(HttpClientModule)]
+});

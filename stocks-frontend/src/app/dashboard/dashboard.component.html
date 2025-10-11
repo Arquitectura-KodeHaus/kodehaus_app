@@ -1,0 +1,34 @@
+<div class="dashboard">
+ <h1 class="titulo"> PlazApp - Módulo de Control</h1>
+
+
+  <div *ngIf="errorMessage" class="error">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="isLoading" class="loading">
+    Cargando datos...
+  </div>
+
+  <div class="cards" *ngIf="!isLoading">
+    <div class="card">
+      <h3>Plazas activas</h3>
+      <p>{{ plazasActivas }}</p>
+    </div>
+
+    <div class="card">
+      <h3>Módulos activos</h3>
+      <p>{{ modulosActivos }}</p>
+    </div>
+
+    <div class="card">
+      <h3>Módulo más usado</h3>
+      <p>{{ moduloMasUsado }}</p>
+    </div>
+
+    <div class="card">
+      <h3>Total de ganancias</h3>
+      <p class="money">$ {{ totalGanancias | number }}</p>
+    </div>
+  </div>
+</div>
