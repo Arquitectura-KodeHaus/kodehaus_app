@@ -20,24 +20,4 @@ public class StocksBackendApplication {
     public static void main(String[] args) {
         SpringApplication.run(StocksBackendApplication.class, args);
     }
-
-    @Bean
-    CommandLineRunner seedStocks(StockRepository repository) {
-        return args -> {
-            if (repository.count() > 0) {
-                log.info("Skipping seed data creation because stocks already exist");
-                return;
-            }
-
-            log.info("Seeding CockroachDB with starter stock data");
-            List<Stock> starterStocks = List.of(
-                    new Stock(null, "GOOGL", "Alphabet Inc.", new BigDecimal("132.47"), Instant.now()),
-                    new Stock(null, "MSFT", "Microsoft Corporation", new BigDecimal("356.81"), Instant.now()),
-                    new Stock(null, "TSLA", "Tesla, Inc.", new BigDecimal("252.75"), Instant.now())
-            );
-
-            repository.saveAll(starterStocks);
-            log.info("Seed data created successfully");
-        };
-    }
 }
