@@ -47,6 +47,9 @@ jobs:
         run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
         working-directory: .
 
+      - name: Give execute permissions to mvnw
+        run: chmod +x mvnw
+
       - name: Build jar (optional)
         run: |
           if [ -f mvnw ]; then ./mvnw -B -DskipTests package; fi
