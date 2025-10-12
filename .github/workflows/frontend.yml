@@ -21,7 +21,7 @@ jobs:
     
     defaults:
       run:
-        working-directory: stocks-frontend 
+        working-directory: stocks-frontend
 
     steps:
       - name: Checkout code
@@ -37,22 +37,28 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build Angular app
-        run: npm run build -- --configuration production --base-href=/
-
-      - name: Replace environment variables
+      - name: Replace API_URL in environment.prod.ts BEFORE build
         env:
-          API_URL: ${{ vars.BACKEND_URL }}
+          BACKEND_URL: ${{ vars.BACKEND_URL }}
         run: |
-          node replace-env.js
-          echo "✅ Environment variables replaced"
-          echo "API_URL set to: $API_URL"
+          echo "🔧 Replacing \${API_URL} with $BACKEND_URL"
+          sed -i "s|\${API_URL}|$BACKEND_URL|g" src/environments/environment.prod.ts
+          
+          echo "✅ Updated environment.prod.ts:"
+          cat src/environments/environment.prod.ts
+
+      - name: Build Angular app
+        run: npm run build -- --configuration production
 
       - name: Verify build output
         run: |
-          ls -la dist/stocks-frontend/
-          echo "Checking for API_URL replacement..."
-          grep -r "stocks-backend-service" dist/stocks-frontend/ || echo "No hardcoded localhost found - Good!"
+          echo "📦 Build output:"
+          ls -lh dist/stocks-frontend/
+          
+          echo ""
+          echo "🔍 Checking if backend URL is in the build:"
+          grep -r "stocks-backend-service" dist/stocks-frontend/*.js && echo "✅ Backend URL found!" || echo "❌ Backend URL NOT found"
+          grep -r "localhost:8080" dist/stocks-frontend/*.js && echo "⚠️  localhost still present!" || echo "✅ No localhost found"
 
       - name: Auth to GCP (Workload Identity Federation)
         uses: google-github-actions/auth@v2
@@ -74,67 +80,27 @@ jobs:
         working-directory: .
         run: |
           echo "🌐 Configuring bucket as website..."
-          
-          # Hacer el bucket público
           gsutil iam ch allUsers:objectViewer gs://${{ env.BUCKET_NAME }}
-          
-          # Configurar como website
           gsutil web set -m index.html -e index.html gs://${{ env.BUCKET_NAME }}
           
-          # Configurar CORS
           cat > cors.json << 'EOF'
-          [
-            {
-              "origin": ["*"],
-              "method": ["GET", "HEAD"],
-              "responseHeader": ["Content-Type", "Access-Control-Allow-Origin"],
-              "maxAgeSeconds": 3600
-            }
-          ]
+          [{"origin": ["*"], "method": ["GET", "HEAD"], "responseHeader": ["Content-Type"], "maxAgeSeconds": 3600}]
           EOF
           gsutil cors set cors.json gs://${{ env.BUCKET_NAME }}
           rm cors.json
-          
-          echo "✅ Bucket configured"
 
       - name: Set Cache-Control headers
         working-directory: .
         run: |
-          echo "⚡ Setting cache headers..."
-          
-          # HTML sin caché (para siempre obtener la última versión)
           gsutil -m setmeta -h "Cache-Control:no-cache, no-store, must-revalidate" \
             gs://${{ env.BUCKET_NAME }}/index.html
-          
-          # JS/CSS con caché largo (tienen hash en el nombre)
           gsutil -m setmeta -h "Cache-Control:public, max-age=31536000, immutable" \
             "gs://${{ env.BUCKET_NAME }}/*.js" 2>/dev/null || true
-          gsutil -m setmeta -h "Cache-Control:public, max-age=31536000, immutable" \
-            "gs://${{ env.BUCKET_NAME }}/*.css" 2>/dev/null || true
-          
-          # Favicon y assets con caché medio
-          gsutil -m setmeta -h "Cache-Control:public, max-age=86400" \
-            gs://${{ env.BUCKET_NAME }}/favicon.ico 2>/dev/null || true
-          gsutil -m setmeta -h "Cache-Control:public, max-age=86400" \
-            "gs://${{ env.BUCKET_NAME }}/assets/**" 2>/dev/null || true
-          
-          echo "✅ Cache headers set"
 
       - name: Display deployment info
-        working-directory: .
         run: |
           echo ""
-          echo "🎉 =================================="
-          echo "   Frontend Deployed Successfully!"
-          echo "   =================================="
-          echo ""
-          echo "📍 Access your app at:"
-          echo "   https://storage.googleapis.com/${{ env.BUCKET_NAME }}/index.html"
-          echo ""
-          echo "🌐 Alternative URLs:"
-          echo "   https://${{ env.BUCKET_NAME }}.storage.googleapis.com/index.html"
-          echo ""
-          echo "🔗 Backend API:"
-          echo "   ${{ vars.BACKEND_URL }}"
-          echo ""
-          echo "✅ Build completed at: $(date)"
+          echo "🎉 Frontend Deployed!"
+          echo "📍 https://storage.googleapis.com/${{ env.BUCKET_NAME }}/index.html"
+          echo "🌐 https://${{ env.BUCKET_NAME }}.storage.googleapis.com/index.html"
+          echo "🔗 Backend: ${{ vars.BACKEND_URL }}"
