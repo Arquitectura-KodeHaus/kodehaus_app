@@ -19,16 +19,31 @@ export class PlazasComponent {
     dominio: '',
     departamento: '',
     ciudad: '',
-    direccion: ''
+    direccion: '',
+    fechaCreacion: null
   } 
+
+  plazaInfo: Plaza ={
+    id: 0,
+    nombre: '',
+    contacto: '',
+    dominio: '',
+    departamento: '',
+    ciudad: '',
+    direccion: '',
+    fechaCreacion: null
+  }
 
   constructor(private PlazasService: PlazasService) {}
 
   showRegisterForm = false;
   showDeleteConfirm = false;
+  showInfoPanel = false;
+  showMofidyForm = false;
 
   DeleteId: bigint;
   DeleteName = '';
+  modfiyId: bigint;
 
   listaPlazas: Plaza[];
 
@@ -49,10 +64,52 @@ export class PlazasComponent {
     this.showRegisterForm = !this.showRegisterForm;
   }
 
+  toggleModifyForm(id): void{
+    this.showMofidyForm = !this.showMofidyForm;
+    this.modfiyId = id
+
+    if(this.nuevaPlaza.nombre == ''){
+      this.PlazasService.findPlaza(id).subscribe({
+        next: (data) => {
+          this.nuevaPlaza = data
+          console.log("Informacion de plaza: ", this.nuevaPlaza)
+        }
+      })
+    }
+
+    else{
+      this.nuevaPlaza = {
+        id: 0,
+        nombre: '',
+        contacto: '',
+        dominio: '',
+        departamento: '',
+        ciudad: '',
+        direccion: '',
+        fechaCreacion: null
+      }
+    }
+  }
+
   toggleDelete(id, nombre): void{
     this.DeleteId = id;
     this.DeleteName = nombre;
     this.showDeleteConfirm = !this.showDeleteConfirm
+  }
+
+  toggleInfoPanel(): void{
+    this.showInfoPanel = !this.showInfoPanel;
+  }
+
+  showPlazaInfo(id): void{
+    this.toggleInfoPanel();
+
+    this.PlazasService.findPlaza(id).subscribe({
+      next: (data) => {
+        this.plazaInfo = data
+        console.log("Informacion de plaza: ", this.plazaInfo)
+      }
+    })
   }
 
   crearPlaza(): void {
@@ -72,6 +129,24 @@ export class PlazasComponent {
     });
 
     this.toggleRegisterForm()
+  }
+
+  actualizarPlaza(): void {
+    console.log("Nueva información:", this.nuevaPlaza)
+
+    this.PlazasService.updatePlaza(this.modfiyId ,this.nuevaPlaza).subscribe({
+      next: response => {
+        console.log('Plaza actualizadas', response)
+        alert("La información de la plaza ha sido actualizada")
+        window.location.reload();},
+      
+        error: err => {
+        console.error('Error al actualizar la plaza:', err)
+        alert("Ocurrio un error al actualizar la información de la plaza, por favor intente más tarde")
+        window.location.reload();}
+    });
+
+    this.toggleModifyForm(null)
   }
 
   deletePlaza(): void{

@@ -51,11 +51,12 @@
               <td>{{plaza.nombre}}</td>
               <td>{{plaza.ciudad}}, {{plaza.departamento}}</td>
               <td>Avanzado</td>
-              <td>2025-09-12</td>
+              <td>{{plaza.fechaCreacion}}</td>
               <td>Inventario, Ventas</td>
               <td>{{plaza.dominio}}</td>
               <td class="actions">
-                <button>✏️</button>
+                <button (click)="showPlazaInfo(plaza.id)">🔎</button>
+                <button (click)="toggleModifyForm(plaza.id)">✏️</button>
                 <button (click)="toggleDelete(plaza.id, plaza.nombre)">🗑️</button>
               </td>
             </tr>
@@ -121,7 +122,68 @@
           </div>
         </form>
       </div>
-      } @if(showDeleteConfirm){
+      }
+      
+      @if(showMofidyForm){
+      <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Registrar Plaza (ejemplo)">
+
+        <form (ngSubmit)="actualizarPlaza()">
+          <h3 style="margin-top: 0">Modificar Plaza</h3>
+          <div class="form-row">
+            <label>Nombre</label>
+            <input class="input" name="nombre" [(ngModel)]="nuevaPlaza.nombre" placeholder="Nombre de la plaza" />
+          </div>
+          <div class="form-row">
+            <label>Departamento</label
+            ><input class="input" name="departamento" [(ngModel)]="nuevaPlaza.departamento" placeholder="Departamento" />
+          </div>
+          <div class="form-row">
+            <label>Ciudad</label
+            ><input class="input" name="ciudad" [(ngModel)]="nuevaPlaza.ciudad" placeholder="Ciudad" />
+          </div>
+          <div class="form-row">
+            <label>Dirección</label
+            ><input class="input" name="direccion" [(ngModel)]="nuevaPlaza.direccion" placeholder="Dirección completa" />
+          </div>
+          <div class="form-row">
+            <label>Contacto</label
+            ><input class="input" name="contacto" [(ngModel)]="nuevaPlaza.contacto" placeholder="Email / teléfono" />
+          </div>
+          <div class="form-row">
+            <label>Plan</label
+            ><select>
+              <option>Básico</option>
+              <option>Avanzado</option>
+              <option>Premium</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>Módulos</label>
+            <div class="checkbox-row">
+              <label><input type="checkbox" /> Inventario</label
+              ><label><input type="checkbox" /> Ventas</label
+              ><label><input type="checkbox" /> Facturación</label>
+            </div>
+          </div>
+          <div
+            style="
+              display: flex;
+              gap: 8px;
+              justify-content: flex-end;
+              margin-top: 12px;
+            ">
+            <button class="btn" style="background: #e0e0e0; color: #333" (click)="toggleModifyForm(null)">Cancelar</button>
+            <button type="submit" class="btn">Actualizar</button>
+          </div>
+        </form>
+      </div>
+      } 
+      
+      @if(showDeleteConfirm){
       <div
         class="modal"
         role="dialog"
@@ -143,6 +205,61 @@
           <button class="btn" (click)="deletePlaza()">Confirmar</button>
         </div>
       </div>
+      }
+
+      @if(showInfoPanel){
+      <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Registrar Plaza (ejemplo)">
+        <h3 style="margin-top: 0">Informacion de Plaza</h3>
+        <div>
+          <h4>Nombre</h4>
+          <p>{{plazaInfo.nombre}}</p>
+        </div>
+        <div>
+          <h4>Departamento</h4>
+          <p>{{plazaInfo.departamento}}</p>
+        </div>
+        <div>
+          <h4>Ciudad</h4>
+          <p>{{plazaInfo.ciudad}}</p>
+        </div>
+        <div>
+          <h4>Dirección</h4>
+          <p>{{plazaInfo.direccion}}</p>
+        </div>
+        <div>
+          <h4>Contacto(telefono/correo)</h4>
+          <p>{{plazaInfo.contacto}}</p>
+        </div>
+        <div>
+          <h4>Plan</h4>
+          <p>Avanzado</p>
+        </div>
+        <div>
+          <h4>Módulos</h4>
+          <p>Inventario, Ventas</p>
+        </div>
+        <div>
+          <h4>Dominio</h4>
+          <p>{{plazaInfo.dominio}}</p>
+        </div>
+        <div>
+          <h4>Fecha de registro</h4>
+          <p>{{plazaInfo.fechaCreacion}}</p>
+        </div>
+        <div
+            style="
+              display: flex;
+              gap: 8px;
+              justify-content: flex-end;
+              margin-top: 12px;
+            ">
+            <button class="btn" style="background: #e0e0e0; color: #333" (click)="showPlazaInfo(null)">Cerrar</button>
+          </div>
+        </div>
       }
     </main>
   </div>

@@ -22,4 +22,12 @@ export class PlazasService {
     deletePlaza(id: bigint): Observable<any> {
         return this.http.delete<Plaza>(`${this.apiUrl}/${id}`);
     }
+
+    findPlaza(id: bigint): Observable<Plaza> {
+        return this.http.get<Plaza>(`${this.apiUrl}/${id}`);
+    }
+
+    updatePlaza(id: bigint, plaza: Plaza): Observable<Plaza> {
+        return this.http.put<Plaza>(`${this.apiUrl}/${id}`, plaza);
+    }
 }
