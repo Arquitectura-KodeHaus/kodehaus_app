@@ -59,5 +59,10 @@ public Map<String, Object> getTotalGanancias() {
     return result;
 }
 
+    @GetMapping("/plazas-activas")
+    public Map<String, Object> getPlazasActivas() {
+        String sql = "SELECT COUNT(*) AS cantidad_plazas_activas FROM plaza";
+        return jdbcTemplate.queryForMap(sql);
+    }
     
 }
