@@ -24,7 +24,6 @@ export class DashboardService {
   }
 
   getPlazasActivas(): Observable<any> {
-    // Usa el endpoint general de plazas (ya existe en tu backend)
-    return this.http.get(`${this.apiUrl}/api/plazas`);
+    return this.http.get(`${this.apiUrl}/plazas-activas`);
   }
 }
