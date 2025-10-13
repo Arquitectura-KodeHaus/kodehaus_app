@@ -1,6 +1,6 @@
 package com.kodehaus.stocksbackend.service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,7 +57,7 @@ public class PlazaServiceImpl implements PlazaService {
         plaza.setNombre(plazaReq.nombre());
         plaza.setContacto(plazaReq.contacto());
         plaza.setDominio(plazaReq.dominio());
-        plaza.setFechaCreacion(LocalDate.now()); // Asignación de fecha en el Backend
+        plaza.setFechaCreacion(LocalDateTime.now()); // Asignación de fecha en el Backend
         plaza.setUbicacion(savedUbicacion); // Enlace de la relación
 
         // 3. Persistencia y Respuesta

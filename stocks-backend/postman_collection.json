@@ -1,0 +1,459 @@
+{
+  "info": {
+    "name": "KodeHaus Stocks Backend",
+    "_postman_id": "b1f9e5a2-0000-4000-8000-000000000000",
+    "description": "Colección para probar el backend de Stocks (endpoints de suscripciones, modulos y plazas).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Suscripciones",
+      "item": [
+        {
+          "name": "Get all suscripciones",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/suscripciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "suscripciones"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get suscripcion by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/suscripciones/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "suscripciones",
+                ":id"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create suscripcion",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"periodicidad\": \"Mensual\",\n  \"fechaUltimoPago\": \"2025-10-01\",\n  \"fechaRenovacion\": \"2025-11-01\",\n  \"estado\": \"Vigente\",\n  \"idPlaza\": 1,\n  \"idPlan\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/suscripciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "suscripciones"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update suscripcion",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"periodicidad\": \"Anual\",\n  \"fechaUltimoPago\": \"2025-09-01\",\n  \"fechaRenovacion\": \"2026-09-01\",\n  \"estado\": \"Vencida\",\n  \"idPlaza\": 1,\n  \"idPlan\": 2\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/suscripciones/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "suscripciones",
+                ":id"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete suscripcion",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/suscripciones/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "suscripciones",
+                ":id"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/suscripciones/stats",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "suscripciones",
+                "stats"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Modulos",
+      "item": [
+        {
+          "name": "Get all modulos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/modulos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "modulos"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get modulo by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/modulos/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "modulos",
+                ":id"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create modulo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Modulo Demo\",\n  \"descripcion\": \"Descripcion del modulo\",\n  \"estado\": \"activo\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/modulos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "modulos"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update modulo",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Modulo Actualizado\",\n  \"descripcion\": \"Descripcion actualizada\",\n  \"estado\": \"inactivo\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/modulos/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "modulos",
+                ":id"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete modulo",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/modulos/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "modulos",
+                ":id"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Plazas",
+      "item": [
+        {
+          "name": "Get all plazas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/plazas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "plazas"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get plaza by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/plazas/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "plazas",
+                ":id"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create plaza",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Plaza Demo\",\n  \"ubicacion\": \"Ciudad X\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/plazas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "plazas"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update plaza",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Plaza Actualizada\",\n  \"ubicacion\": \"Ciudad Y\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/plazas/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "plazas",
+                ":id"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete plaza",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/plazas/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "plazas",
+                ":id"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Modulos activos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/modulos-activos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "dashboard",
+                "modulos-activos"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Modulo mas usado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/modulo-mas-usado",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "dashboard",
+                "modulo-mas-usado"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Total ganancias",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/total-ganancias",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "dashboard",
+                "total-ganancias"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Suscripciones vigentes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/suscripciones-vigentes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "dashboard",
+                "suscripciones-vigentes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Suscripciones en mora",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/suscripciones-mora",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "dashboard",
+                "suscripciones-mora"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Resumen",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/resumen",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "dashboard",
+                "resumen"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080/api",
+      "type": "string"
+    }
+  ]
+}

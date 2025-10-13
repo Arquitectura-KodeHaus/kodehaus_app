@@ -1,13 +1,13 @@
 package com.kodehaus.stocksbackend.dto;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public record PlazaDTO(
     Long id,
     String nombre,
     String contacto,
     String dominio,
-    LocalDate fechaCreacion,
+    LocalDateTime fechaCreacion,
     String departamento,
     String ciudad,
     String direccion

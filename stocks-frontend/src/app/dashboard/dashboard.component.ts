@@ -22,26 +22,11 @@ export class DashboardComponent implements OnInit {
   constructor(private dashboardService: DashboardService) {}
 
   ngOnInit(): void {
-    this.dashboardService.getModulosActivos().subscribe({
-      next: data => this.modulosActivos = data.cantidad_modulos_activos,
-      error: () => this.errorMessage = 'Error cargando módulos activos'
-    });
-
-    this.dashboardService.getModuloMasUsado().subscribe({
-      next: data => this.moduloMasUsado = data.nombre,
-      error: () => this.errorMessage = 'Error cargando módulo más usado'
-    });
-
-    this.dashboardService.getTotalGanancias().subscribe({
-      next: data => this.totalGanancias = data.total,
-      error: () => this.errorMessage = 'Error cargando ganancias'
-    });
-
-    this.dashboardService.getPlazasActivas().subscribe({
-      next: (plazas: any[]) => this.plazasActivas = plazas.length,
-      error: () => this.errorMessage = 'Error cargando plazas activas'
-    });
-
+    // Temporalmente usar datos estáticos para debug
+    this.modulosActivos = 5;
+    this.plazasActivas = 3;
+    this.moduloMasUsado = 'Inventario';
+    this.totalGanancias = 15000;
     this.isLoading = false;
   }
 }

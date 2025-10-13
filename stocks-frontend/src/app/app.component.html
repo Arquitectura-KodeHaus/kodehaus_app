@@ -1,38 +1,24 @@
-<div class="layout">
-  <header>
-    <h1>{{ title }}</h1>
-    <p>Demo Angular + Spring Boot + CockroachDB</p>
-  </header>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand">PlazApp Admin</div>
+    <nav>
+      <ul>
+        <li (click)="show('dashboard')" [class.active]="currentView==='dashboard'">Dashboard</li>
+        <li (click)="show('suscripciones')" [class.active]="currentView==='suscripciones'">Suscripciones</li>
+      </ul>
+    </nav>
+  </aside>
 
-  <section class="card">
-    <ng-container *ngIf="isLoading; else loaded">
-      <p>Cargando acciones...</p>
-    </ng-container>
-    <ng-template #loaded>
-      <div *ngIf="errorMessage; else table">
-        <p class="error">{{ errorMessage }}</p>
-      </div>
-      <ng-template #table>
-        <table>
-          <thead>
-          <tr>
-            <th>Símbolo</th>
-            <th>Nombre</th>
-            <th>Precio</th>
-            <th>Última actualización</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let stock of stocks">
-            <td>{{ stock.symbol }}</td>
-            <td>{{ stock.name }}</td>
-            <td>{{ stock.price | number:'1.2-2' }}</td>
-            <td>{{ stock.lastUpdated | date:'short' }}</td>
-          </tr>
-          </tbody>
-        </table>
-        <p *ngIf="stocks.length === 0" class="empty">No hay datos aún. Crea nuevas acciones usando el endpoint POST /api/stocks.</p>
-      </ng-template>
-    </ng-template>
-  </section>
+  <main class="main">
+    <header class="page-header">
+      <h1 *ngIf="currentView==='dashboard'">Dashboard</h1>
+      <h1 *ngIf="currentView==='suscripciones'">Gestión de Suscripciones</h1>
+    </header>
+
+    <section class="content">
+      <app-dashboard *ngIf="currentView==='dashboard'"></app-dashboard>
+      <app-suscripciones *ngIf="currentView==='suscripciones'"></app-suscripciones>
+    </section>
+  </main>
 </div>
+

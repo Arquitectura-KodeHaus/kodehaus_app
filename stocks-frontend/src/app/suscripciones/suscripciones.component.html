@@ -1,0 +1,77 @@
+<div class="suscripciones-layout">
+  <div class="toolbar">
+    <h2>Gestión de Suscripciones</h2>
+    <div class="filters">
+      <label>Estado de pago
+        <select [(ngModel)]="estadoPagoFilter" (change)="applyFilters()">
+          <option>Todos</option>
+          <option>Al día</option>
+          <option>En mora</option>
+        </select>
+      </label>
+
+      <label>Estado suscripción
+        <select [(ngModel)]="estadoSuscripcionFilter" (change)="applyFilters()">
+          <option>Todos</option>
+          <option>Vigente</option>
+          <option>Vencida</option>
+        </select>
+      </label>
+    </div>
+    <button class="export">Exportar</button>
+  </div>
+
+  <div *ngIf="isLoading">Cargando suscripciones...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <table *ngIf="!isLoading && !error">
+    <thead>
+      <tr>
+        <th>Plan</th>
+        <th>Plaza</th>
+        <th>Periodicidad</th>
+        <th>Último pago</th>
+        <th>Renovación</th>
+        <th>Estado suscripción</th>
+        <th>Estado pago</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let s of filtered">
+        <td>{{ s.plan }}</td>
+        <td>{{ s.plaza }}</td>
+        <td>{{ s.periodicidad }}</td>
+        <td>{{ s.ultimoPago }}</td>
+        <td>{{ s.renovacion }}</td>
+        <td>{{ s.estadoSuscripcion }}</td>
+        <td>
+          <span class="badge" [ngClass]="{'ok': s.estadoPago==='Al día', 'late': s.estadoPago==='En mora'}">{{ s.estadoPago }}</span>
+        </td>
+        <td>
+          <button (click)="verSuscripcion(s)" class="edit" title="Ver">👁️</button>
+          <select [(ngModel)]="s.estadoSuscripcion" (change)="cambiarEstado(s)" style="margin-left:8px">
+            <option value="Vigente">Vigente</option>
+            <option value="Cancelada">Cancelada</option>
+          </select>
+        </td>
+      </tr>
+    </tbody>
+  <!-- Modal Detalle Suscripción -->
+  <div class="modal-backdrop" *ngIf="modalAbierto">
+    <div class="modal">
+      <h3>Detalle de Suscripción</h3>
+      <div *ngIf="suscripcionSeleccionada">
+        <p><b>Plan:</b> {{ suscripcionSeleccionada.plan }}</p>
+        <p><b>Plaza:</b> {{ suscripcionSeleccionada.plaza }}</p>
+        <p><b>Periodicidad:</b> {{ suscripcionSeleccionada.periodicidad }}</p>
+        <p><b>Último pago:</b> {{ suscripcionSeleccionada.ultimoPago }}</p>
+        <p><b>Renovación:</b> {{ suscripcionSeleccionada.renovacion }}</p>
+        <p><b>Estado suscripción:</b> {{ suscripcionSeleccionada.estadoSuscripcion }}</p>
+        <p><b>Estado pago:</b> {{ suscripcionSeleccionada.estadoPago }}</p>
+      </div>
+      <button (click)="cerrarModal()">Cerrar</button>
+    </div>
+  </div>
+  </table>
+</div>

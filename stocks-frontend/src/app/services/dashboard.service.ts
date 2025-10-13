@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class DashboardService {
-  private apiUrl = 'http://localhost:8080/api/dashboard';
+  private apiUrl = 'http://localhost:8081/api/dashboard';
 
   constructor(private http: HttpClient) {}
 
@@ -24,6 +24,6 @@ export class DashboardService {
 
   getPlazasActivas(): Observable<any> {
     // Usa el endpoint general de plazas (ya existe en tu backend)
-    return this.http.get(`http://localhost:8080/api/plazas`);
+    return this.http.get(`http://localhost:8081/api/plazas`);
   }
 }
