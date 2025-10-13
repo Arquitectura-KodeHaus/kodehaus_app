@@ -27,7 +27,8 @@ export class PlazasComponent {
   showRegisterForm = false;
   showDeleteConfirm = false;
 
-  plazaToDelete = 0;
+  DeleteId: bigint;
+  DeleteName = '';
 
   listaPlazas: Plaza[];
 
@@ -48,8 +49,9 @@ export class PlazasComponent {
     this.showRegisterForm = !this.showRegisterForm;
   }
 
-  toggleDelete(id): void{
-    this.plazaToDelete = id;
+  toggleDelete(id, nombre): void{
+    this.DeleteId = id;
+    this.DeleteName = nombre;
     this.showDeleteConfirm = !this.showDeleteConfirm
   }
 
@@ -60,17 +62,32 @@ export class PlazasComponent {
     this.PlazasService.crearPlaza(this.nuevaPlaza).subscribe({
       next: response => {
         console.log('Plaza creada:', response)
-        alert("La plaza " + this.nuevaPlaza.nombre + " ha sido creada")},
+        alert("La plaza " + this.nuevaPlaza.nombre + " ha sido creada")
+        window.location.reload();},
       
         error: err => {
         console.error('Error al crear la plaza:', err)
-        alert("Ocurrio un error al crear la plaza, por favor intente más tarde")}
+        alert("Ocurrio un error al crear la plaza, por favor intente más tarde")
+        window.location.reload();}
     });
 
     this.toggleRegisterForm()
   }
 
   deletePlaza(): void{
-    console.log("Eliminar la plaza con Id " + this.plazaToDelete)
+    this.toggleDelete(this.DeleteId, this.DeleteName)
+    console.log("Eliminar la plaza con Id " + this.DeleteId)
+
+      this.PlazasService.deletePlaza(this.DeleteId).subscribe({
+      next: () => {
+        alert('La plaza ha sido eliminada con éxito');
+        window.location.reload();
+      },
+      error: (err) => {
+        console.error('Error al eliminar la plaza:', err);
+        alert('Ocurrió un error al eliminar la plaza: ' + (err.error?.message || err.message));
+        window.location.reload();
+      }
+    });
   }
 }

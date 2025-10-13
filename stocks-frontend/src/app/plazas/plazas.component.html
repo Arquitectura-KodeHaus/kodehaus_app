@@ -28,7 +28,12 @@
           + Registrar Nueva Plaza
         </button>
       </div>
-      <table class="table">
+      @if(listaPlazas.length == 0){
+        <h2 style="color: red">No hay plazas registradas</h2>
+      }
+
+      @else(){
+        <table class="table">
         <thead>
           <tr>
             <th>Nombre</th>
@@ -51,12 +56,13 @@
               <td>{{plaza.dominio}}</td>
               <td class="actions">
                 <button>✏️</button>
-                <button (click)="toggleDelete(plaza.id)">🗑️</button>
+                <button (click)="toggleDelete(plaza.id, plaza.nombre)">🗑️</button>
               </td>
             </tr>
           }
         </tbody>
       </table>
+      }
       @if(showRegisterForm){
       <div
         class="modal"
@@ -122,7 +128,7 @@
         aria-modal="true"
         aria-label="Registrar Plaza (ejemplo)"
       >
-        <h3 style="margin-top: 0">Eliminar la plaza?</h3>
+        <h3 style="margin-top: 0">Eliminar la plaza {{DeleteName}}?</h3>
         <div
           style="
             display: flex;
@@ -132,7 +138,7 @@
           "
         >
           <button
-            class="btn"style="background: #e0e0e0; color: #333" (click)="toggleDelete(null)">Cancelar
+            class="btn"style="background: #e0e0e0; color: #333" (click)="toggleDelete(null, '')">Cancelar
           </button>
           <button class="btn" (click)="deletePlaza()">Confirmar</button>
         </div>

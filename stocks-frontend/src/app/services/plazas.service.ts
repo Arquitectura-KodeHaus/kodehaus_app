@@ -18,4 +18,8 @@ export class PlazasService {
     crearPlaza(plaza: Plaza): Observable<Plaza> {
         return this.http.post<Plaza>(`${this.apiUrl}`, plaza);
     }
+
+    deletePlaza(id: bigint): Observable<any> {
+        return this.http.delete<Plaza>(`${this.apiUrl}/${id}`);
+    }
 }
