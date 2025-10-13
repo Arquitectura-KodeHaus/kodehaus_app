@@ -28,7 +28,7 @@ public class PlazaController {
     @Autowired
     private PlazaService plazaService;
 
-    @GetMapping
+    @GetMapping("/find/activas")
     public ResponseEntity<List<PlazaDTO>> findAll() {
         List<PlazaDTO> plazas = plazaService.findAll();
         return ResponseEntity.ok(plazas);

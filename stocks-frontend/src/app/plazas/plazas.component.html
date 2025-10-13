@@ -1,5 +1,5 @@
 <div class="app">
-<aside class="sidebar">
+  <aside class="sidebar">
     <div class="logo">PlazApp Admin</div>
     <nav class="nav">
       <a href="/">🏠 Dashboard</a>
@@ -8,40 +8,142 @@
       <a href="/plazas" class="active">🏢 Plazas</a>
       <a href="/suscripciones">🔁 Suscripciones</a>
     </nav>
-    <div style="margin-top:auto;font-size:13px;color:#cfcfcf">© KodeHaus</div>
+    <div style="margin-top: auto; font-size: 13px; color: #cfcfcf">
+      © KodeHaus
+    </div>
   </aside>
 
   <div class="container">
     <header class="header">
-      <div style="margin-right:12px;text-align:right">
+      <div style="margin-right: 12px; text-align: right">
         <div class="small">Admin Entidad de Gobierno</div>
       </div>
       <div class="avatar" title="Admin"></div>
     </header>
     <main class="content">
-<h2 style='margin-top:6px;margin-bottom:18px'>Gestión de Plazas</h2>
-  <div class="toolbar"><div class="small">Listado de plazas registradas</div><button class="btn">+ Registrar Nueva Plaza</button></div>
-  <table class="table">
-    <thead><tr><th>Nombre</th><th>Ubicación</th><th>Plan</th><th>Fecha adquisición</th><th>Módulos</th><th>Dominio</th><th>Acciones</th></tr></thead>
-    <tbody>
-      <tr><td>Plaza Central</td><td>Bogotá, Cundinamarca</td><td>Avanzado</td><td>2025-09-12</td><td>Inventario, Ventas</td><td class="token">plazacentral.token</td><td class="actions"><button>✏️</button><button>🗑️</button></td></tr>
-      <tr><td>Plaza Norte</td><td>Bogotá, Engativá</td><td>Premium</td><td>2025-08-01</td><td>Inventario, Facturación</td><td class="token">plazanorte.token</td><td class="actions"><button>✏️</button><button>🗑️</button></td></tr>
-    </tbody>
-  </table>
-  <div class="modal" role="dialog" aria-modal="true" aria-label="Registrar Plaza (ejemplo)">
-    <h3 style="margin-top:0">Registrar Nueva Plaza</h3>
-    <div class="form-row"><label>Nombre</label><input class="input" placeholder="Nombre de la plaza"></div>
-    <div class="form-row"><label>Dirección</label><input class="input" placeholder="Dirección completa"></div>
-    <div class="form-row"><label>Contacto</label><input class="input" placeholder="Email / teléfono"></div>
-    <div class="form-row"><label>Plan</label><select><option>Básico</option><option>Avanzado</option><option>Premium</option></select></div>
-    <div class="form-row"><label>Módulos</label><div class="checkbox-row"><label><input type="checkbox"> Inventario</label><label><input type="checkbox"> Ventas</label><label><input type="checkbox"> Facturación</label></div></div>
-    <div class="form-row"><label>Dominio (autogenerado)</label><input class="input" placeholder="plazanombre.token"></div>
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
-      <button class="btn" style="background:#e0e0e0;color:#333">Cancelar</button>
-      <button class="btn">Guardar</button>
-    </div>
-  </div>
+      <h2 style="margin-top: 6px; margin-bottom: 18px">Gestión de Plazas</h2>
+      <div class="toolbar">
+        <div class="small">Listado de plazas registradas</div>
+        <button class="btn" (click)="toggleRegisterForm()">
+          + Registrar Nueva Plaza
+        </button>
+      </div>
+      @if(listaPlazas.length == 0){
+        <h2 style="color: red">No hay plazas registradas</h2>
+      }
 
+      @else(){
+        <table class="table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Ubicación</th>
+            <th>Plan</th>
+            <th>Fecha adquisición</th>
+            <th>Módulos</th>
+            <th>Dominio</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for(plaza of listaPlazas; track plaza.id){
+            <tr>
+              <td>{{plaza.nombre}}</td>
+              <td>{{plaza.ciudad}}, {{plaza.departamento}}</td>
+              <td>Avanzado</td>
+              <td>2025-09-12</td>
+              <td>Inventario, Ventas</td>
+              <td>{{plaza.dominio}}</td>
+              <td class="actions">
+                <button>✏️</button>
+                <button (click)="toggleDelete(plaza.id, plaza.nombre)">🗑️</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      }
+      @if(showRegisterForm){
+      <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Registrar Plaza (ejemplo)">
+
+        <form (ngSubmit)="crearPlaza()">
+          <h3 style="margin-top: 0">Registrar Nueva Plaza</h3>
+          <div class="form-row">
+            <label>Nombre</label>
+            <input class="input" name="nombre" [(ngModel)]="nuevaPlaza.nombre" placeholder="Nombre de la plaza" />
+          </div>
+          <div class="form-row">
+            <label>Departamento</label
+            ><input class="input" name="direccion" [(ngModel)]="nuevaPlaza.departamento" placeholder="Departamento" />
+          </div>
+          <div class="form-row">
+            <label>Ciudad</label
+            ><input class="input" name="direccion" [(ngModel)]="nuevaPlaza.ciudad" placeholder="Ciudad" />
+          </div>
+          <div class="form-row">
+            <label>Dirección</label
+            ><input class="input" name="direccion" [(ngModel)]="nuevaPlaza.direccion" placeholder="Dirección completa" />
+          </div>
+          <div class="form-row">
+            <label>Contacto</label
+            ><input class="input" name="contacto" [(ngModel)]="nuevaPlaza.contacto" placeholder="Email / teléfono" />
+          </div>
+          <div class="form-row">
+            <label>Plan</label
+            ><select>
+              <option>Básico</option>
+              <option>Avanzado</option>
+              <option>Premium</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>Módulos</label>
+            <div class="checkbox-row">
+              <label><input type="checkbox" /> Inventario</label
+              ><label><input type="checkbox" /> Ventas</label
+              ><label><input type="checkbox" /> Facturación</label>
+            </div>
+          </div>
+          <div class="form-row"><label>Dominio (autogenerado)</label><input class="input" placeholder="plazanombre.token"></div>
+          <div
+            style="
+              display: flex;
+              gap: 8px;
+              justify-content: flex-end;
+              margin-top: 12px;
+            ">
+            <button class="btn" style="background: #e0e0e0; color: #333" (click)="toggleRegisterForm()">Cancelar</button>
+            <button type="submit" class="btn">Crear</button>
+          </div>
+        </form>
+      </div>
+      } @if(showDeleteConfirm){
+      <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Registrar Plaza (ejemplo)"
+      >
+        <h3 style="margin-top: 0">Eliminar la plaza {{DeleteName}}?</h3>
+        <div
+          style="
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            margin-top: 12px;
+          "
+        >
+          <button
+            class="btn"style="background: #e0e0e0; color: #333" (click)="toggleDelete(null, '')">Cancelar
+          </button>
+          <button class="btn" (click)="deletePlaza()">Confirmar</button>
+        </div>
+      </div>
+      }
     </main>
   </div>
 </div>
