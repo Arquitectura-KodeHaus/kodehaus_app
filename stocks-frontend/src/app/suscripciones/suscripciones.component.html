@@ -1,0 +1,42 @@
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">PlazApp Admin</div>
+    <nav class="nav">
+      <a href="/">🏠 Dashboard</a>
+      <a href="/modulos">🧩 Módulos</a>
+      <a href="/planes">📦 Planes</a>
+      <a href="/plazas">🏢 Plazas</a>
+      <a href="/suscripciones" class="active">🔁 Suscripciones</a>
+    </nav>
+    <div style="margin-top:auto;font-size:13px;color:#cfcfcf">© KodeHaus</div>
+  </aside>
+
+  <div class="container">
+    <header class="header">
+      <div style="margin-right:12px;text-align:right">
+        <div class="small">Admin Entidad de Gobierno</div>
+      </div>
+      <div class="avatar" title="Admin"></div>
+    </header>
+    <main class="content">
+<h2 style='margin-top:6px;margin-bottom:18px'>Gestión de Suscripciones</h2>
+  <div class="toolbar">
+    <div style="display:flex;gap:8px;align-items:center">
+      <label class="small">Estado de pago</label>
+      <select><option>Al día</option><option>En mora</option></select>
+      <label class="small" style="margin-left:12px">Estado suscripción</label>
+      <select><option>Vigente</option><option>Cancelada</option></select>
+    </div>
+    <button class="btn">Exportar</button>
+  </div>
+  <table class="table">
+    <thead><tr><th>Plan</th><th>Plaza</th><th>Periodicidad</th><th>Último pago</th><th>Renovación</th><th>Estado suscripción</th><th>Estado pago</th><th></th></tr></thead>
+    <tbody>
+      <tr><td>Premium</td><td>Plaza Central</td><td>Mensual</td><td>12/09/2025</td><td>12/10/2025</td><td>Vigente</td><td><span class="status active">Al día</span></td><td class="actions"><button>✏️</button></td></tr>
+      <tr><td>Avanzado</td><td>Plaza Norte</td><td>Trimestral</td><td>02/07/2025</td><td>02/10/2025</td><td>Vigente</td><td><span class="status dev">En mora</span></td><td class="actions"><button>✏️</button></td></tr>
+    </tbody>
+  </table>
+
+    </main>
+  </div>
+</div>

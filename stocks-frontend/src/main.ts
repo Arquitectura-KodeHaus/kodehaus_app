@@ -1,8 +1,9 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import { importProvidersFrom } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
-import { DashboardComponent } from './app/dashboard/dashboard.component';
+import { provideRouter } from '@angular/router';
+import { AppComponent } from './app/app.component';
+import { routes } from './app/app-routes';
+import { provideHttpClient } from '@angular/common/http'; 
 
-bootstrapApplication(DashboardComponent, {
-  providers: [importProvidersFrom(HttpClientModule)]
-});
+bootstrapApplication(AppComponent, {
+  providers: [provideRouter(routes), provideHttpClient()]
+}).catch(err => console.error(err));
