@@ -37,7 +37,7 @@ export class DashboardComponent implements OnInit {
     });
 
     this.dashboardService.getPlazasActivas().subscribe({
-      next: (plazas: any[]) => this.plazasActivas = plazas.length,
+      next: (data: any) => this.plazasActivas = data.cantidad_plazas_activas,
       error: () => this.errorMessage = 'Error cargando plazas activas'
     });
 
