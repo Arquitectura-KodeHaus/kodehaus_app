@@ -11,11 +11,11 @@ export class PlazasService {
 
   constructor(private http: HttpClient) {}
 
-  getPlazasActivas(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/activas`)
-  }
-
+  getPlazasActivas(): Observable<Plaza[]> {
+        return this.http.get<Plaza[]>(`${this.apiUrl}/find/activas`)
+    }
+    
     crearPlaza(plaza: Plaza): Observable<Plaza> {
-    return this.http.post<Plaza>(`${this.apiUrl}`, plaza);
-  }
+        return this.http.post<Plaza>(`${this.apiUrl}`, plaza);
+    }
 }

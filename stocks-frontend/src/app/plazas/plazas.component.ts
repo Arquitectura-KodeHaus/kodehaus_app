@@ -27,11 +27,29 @@ export class PlazasComponent {
   showRegisterForm = false;
   showDeleteConfirm = false;
 
-  toggleRegisterForm(){
+  plazaToDelete = 0;
+
+  listaPlazas: Plaza[];
+
+  ngOnInit(){
+    this.PlazasService.getPlazasActivas().subscribe({
+      next: (data) => {
+        this.listaPlazas = data;
+        console.log("Plazas cargadas", this.listaPlazas)
+      },
+      error: (err) => {
+        console.error('Error al obtener las plazas:', err);
+        alert('Error al cargar las plazas: ' + (err.error?.message || err.message));
+      }
+    });
+  }
+
+  toggleRegisterForm(): void{
     this.showRegisterForm = !this.showRegisterForm;
   }
 
-  toggleDelete(){
+  toggleDelete(id): void{
+    this.plazaToDelete = id;
     this.showDeleteConfirm = !this.showDeleteConfirm
   }
 
@@ -50,5 +68,9 @@ export class PlazasComponent {
     });
 
     this.toggleRegisterForm()
+  }
+
+  deletePlaza(): void{
+    console.log("Eliminar la plaza con Id " + this.plazaToDelete)
   }
 }

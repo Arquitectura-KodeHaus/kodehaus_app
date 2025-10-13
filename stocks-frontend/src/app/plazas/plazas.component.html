@@ -41,26 +41,20 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Plaza Central</td>
-            <td>Bogotá, Cundinamarca</td>
-            <td>Avanzado</td>
-            <td>2025-09-12</td>
-            <td>Inventario, Ventas</td>
-            <td class="token">plazacentral.token</td>
-            <td class="actions">
-              <button>✏️</button><button (click)="toggleDelete()">🗑️</button>
-            </td>
-          </tr>
-          <tr>
-            <td>Plaza Norte</td>
-            <td>Bogotá, Engativá</td>
-            <td>Premium</td>
-            <td>2025-08-01</td>
-            <td>Inventario, Facturación</td>
-            <td class="token">plazanorte.token</td>
-            <td class="actions"><button>✏️</button><button>🗑️</button></td>
-          </tr>
+          @for(plaza of listaPlazas; track plaza.id){
+            <tr>
+              <td>{{plaza.nombre}}</td>
+              <td>{{plaza.ciudad}}, {{plaza.departamento}}</td>
+              <td>Avanzado</td>
+              <td>2025-09-12</td>
+              <td>Inventario, Ventas</td>
+              <td>{{plaza.dominio}}</td>
+              <td class="actions">
+                <button>✏️</button>
+                <button (click)="toggleDelete(plaza.id)">🗑️</button>
+              </td>
+            </tr>
+          }
         </tbody>
       </table>
       @if(showRegisterForm){
@@ -138,13 +132,9 @@
           "
         >
           <button
-            class="btn"
-            style="background: #e0e0e0; color: #333"
-            (click)="toggleDelete()"
-          >
-            Cancelar
+            class="btn"style="background: #e0e0e0; color: #333" (click)="toggleDelete(null)">Cancelar
           </button>
-          <button class="btn">Crear</button>
+          <button class="btn" (click)="deletePlaza()">Confirmar</button>
         </div>
       </div>
       }
