@@ -5,5 +5,6 @@ export interface Plaza {
     dominio: string,
     departamento: string,
     ciudad: string,
-    direccion: string
+    direccion: string,
+    fechaCreacion: Date
 }
