@@ -1,6 +1,7 @@
 package com.kodehaus.stocksbackend.service;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,9 +11,13 @@ import org.springframework.stereotype.Service;
 import com.kodehaus.stocksbackend.dto.CreatePlazaReq;
 import com.kodehaus.stocksbackend.dto.PlazaDTO;
 import com.kodehaus.stocksbackend.dto.UpdatePlazaReq;
+import com.kodehaus.stocksbackend.model.Plan;
 import com.kodehaus.stocksbackend.model.Plaza;
+import com.kodehaus.stocksbackend.model.Suscripcion;
 import com.kodehaus.stocksbackend.model.Ubicacion;
+import com.kodehaus.stocksbackend.repository.PlanRepository;
 import com.kodehaus.stocksbackend.repository.PlazaRepository;
+import com.kodehaus.stocksbackend.repository.SuscripcionRepository;
 import com.kodehaus.stocksbackend.repository.UbicacionRepository;
 import com.kodehaus.stocksbackend.utils.PlazaMapper;
 
@@ -24,13 +29,17 @@ public class PlazaServiceImpl implements PlazaService {
     @Autowired
     private PlazaRepository plazaRepository;
     @Autowired
+    private PlanRepository planRepository;
+    @Autowired
+    private SuscripcionRepository suscripcionRepository;
+    @Autowired
     private UbicacionRepository ubicacionRepository;
     @Autowired
     private PlazaMapper plazaMapper;
 
     @Override
     public List<PlazaDTO> findAll() {
-        return plazaRepository.findAll().stream()
+        return plazaRepository.findAllWithRelations().stream()
             .map(plazaMapper::toDto)
             .collect(Collectors.toList());
     }
@@ -52,6 +61,9 @@ public class PlazaServiceImpl implements PlazaService {
         // Guardamos explícitamente la Ubicacion para obtener un ID.
         Ubicacion savedUbicacion = ubicacionRepository.save(ubicacion);
 
+        Plan plan = planRepository.findById(plazaReq.planId())
+            .orElseThrow(() -> new EntityNotFoundException("Plan no encontrado con ID: " + plazaReq.planId()));
+
         // 2. Crear la entidad Plaza
         Plaza plaza = new Plaza();
         plaza.setNombre(plazaReq.nombre());
@@ -62,6 +74,19 @@ public class PlazaServiceImpl implements PlazaService {
 
         // 3. Persistencia y Respuesta
         Plaza savedPlaza = plazaRepository.save(plaza);
+
+        Suscripcion suscripcion = new Suscripcion();
+        suscripcion.setPlaza(savedPlaza);
+        suscripcion.setPlan(plan);
+        suscripcion.setEstado("activa");
+        suscripcion.setFechaUltimoPago(LocalDate.now());
+        suscripcion.setFechaRenovacion(LocalDate.now().plusYears(1));
+        suscripcion.setPeriodicidad("anual");
+
+        Suscripcion suscripcionSaved = suscripcionRepository.save(suscripcion);
+
+        savedPlaza.setSuscripciones(Arrays.asList(suscripcionSaved));
+
         return plazaMapper.toDto(savedPlaza);
     }
 

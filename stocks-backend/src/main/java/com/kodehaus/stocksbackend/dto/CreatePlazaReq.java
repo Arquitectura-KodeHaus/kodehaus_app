@@ -6,6 +6,7 @@ public record CreatePlazaReq(
     String dominio,
     String departamento,
     String ciudad,
-    String direccion
+    String direccion,
+    long planId
     ) {
 }

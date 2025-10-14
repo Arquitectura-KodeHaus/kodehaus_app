@@ -1,4 +1,4 @@
-export interface Plaza {
+export interface CreatePlaza {
     id: number,
     nombre: string,
     contacto: string,
@@ -6,6 +6,6 @@ export interface Plaza {
     departamento: string,
     ciudad: string,
     direccion: string,
-    fechaCreacion: Date,
-    plan?: string
+    planId: number,
+    fechaCreacion: Date | null
 }

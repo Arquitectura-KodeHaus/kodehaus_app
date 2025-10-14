@@ -19,24 +19,187 @@
       <div class="avatar" title="Admin"></div>
     </header>
     <main class="content">
-<h2 style='margin-top:6px;margin-bottom:18px'>Gestión de Suscripciones</h2>
-  <div class="toolbar">
-    <div style="display:flex;gap:8px;align-items:center">
-      <label class="small">Estado de pago</label>
-      <select><option>Al día</option><option>En mora</option></select>
-      <label class="small" style="margin-left:12px">Estado suscripción</label>
-      <select><option>Vigente</option><option>Cancelada</option></select>
-    </div>
-    <button class="btn">Exportar</button>
-  </div>
-  <table class="table">
-    <thead><tr><th>Plan</th><th>Plaza</th><th>Periodicidad</th><th>Último pago</th><th>Renovación</th><th>Estado suscripción</th><th>Estado pago</th><th></th></tr></thead>
-    <tbody>
-      <tr><td>Premium</td><td>Plaza Central</td><td>Mensual</td><td>12/09/2025</td><td>12/10/2025</td><td>Vigente</td><td><span class="status active">Al día</span></td><td class="actions"><button>✏️</button></td></tr>
-      <tr><td>Avanzado</td><td>Plaza Norte</td><td>Trimestral</td><td>02/07/2025</td><td>02/10/2025</td><td>Vigente</td><td><span class="status dev">En mora</span></td><td class="actions"><button>✏️</button></td></tr>
-    </tbody>
-  </table>
+      <div class="page-header">
+        <h2>Gestión de Suscripciones</h2>
+        <div class="header-actions">
+          <button class="btn btn-secondary" (click)="loadSuscripciones()" [disabled]="loading">
+            <span *ngIf="loading">🔄</span>
+            <span *ngIf="!loading">🔄</span>
+            Actualizar
+          </button>
+        </div>
+      </div>
 
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+        <button (click)="errorMessage = ''" class="close-error">×</button>
+      </div>
+
+      <!-- Success Message -->
+      <div *ngIf="successMessage" class="success-message">
+        {{ successMessage }}
+        <button (click)="successMessage = ''" class="close-success">×</button>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="loading" class="loading-container">
+        <div class="spinner"></div>
+        <p>Cargando suscripciones...</p>
+      </div>
+
+      <!-- Main Content -->
+      <div *ngIf="!loading" class="main-content">
+        <!-- Suscripciones List -->
+        <div class="suscripciones-section">
+          <div class="section-header">
+            <h3>Lista de Suscripciones</h3>
+            <span class="count">{{ suscripciones.length }} suscripciones</span>
+          </div>
+          
+          <div class="suscripciones-grid">
+            <div 
+              *ngFor="let suscripcion of suscripciones" 
+              class="suscripcion-card"
+              [class.selected]="selectedSuscripcion?.id === suscripcion.id"
+              (click)="selectSuscripcion(suscripcion)">
+              
+              <div class="card-header">
+                <div class="plan-info">
+                  <h4>{{ suscripcion.plan.tipo }}</h4>
+                  <span class="plan-price">${{ suscripcion.plan.precio | number:'1.2-2' }}</span>
+                </div>
+                <div class="status-badge" [ngClass]="getEstadoClass(suscripcion.estado)">
+                  {{ suscripcion.estado }}
+                </div>
+              </div>
+
+              <div class="card-body">
+                <div class="info-row">
+                  <span class="label">Plaza:</span>
+                  <span class="value">{{ suscripcion.plaza.nombre }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">Periodicidad:</span>
+                  <span class="value">{{ suscripcion.periodicidad }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">Módulos:</span>
+                  <span class="value">{{ (suscripcion.modulos?.length || 0) }} / {{ suscripcion.plan.numModulos }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">Último pago:</span>
+                  <span class="value">{{ formatDate(suscripcion.fechaUltimoPago) }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">Renovación:</span>
+                  <span class="value">{{ formatDate(suscripcion.fechaRenovacion) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Selected Suscripcion Details -->
+        <div *ngIf="selectedSuscripcion" class="details-section">
+          <div class="section-header">
+            <h3>Detalles de Suscripción</h3>
+            <button class="btn btn-primary" (click)="openAddModulosModal()">
+              ➕ Agregar Módulos
+            </button>
+          </div>
+
+          <div class="details-card">
+            <div class="details-header">
+              <div class="plan-details">
+                <h4>{{ selectedSuscripcion.plan.tipo }}</h4>
+                <div class="plan-specs">
+                  <span class="spec">${{ selectedSuscripcion.plan.precio | number:'1.2-2' }}</span>
+                  <span class="spec">{{ selectedSuscripcion.plan.numModulos }} módulos</span>
+                  <span class="spec">{{ selectedSuscripcion.plan.numUsuarios }} usuarios</span>
+                </div>
+              </div>
+              <div class="plaza-details">
+                <h5>{{ selectedSuscripcion.plaza.nombre }}</h5>
+                <p>{{ selectedSuscripcion.plaza.ubicacion.ciudad }}, {{ selectedSuscripcion.plaza.ubicacion.pais }}</p>
+                <p>{{ selectedSuscripcion.plaza.contacto }}</p>
+              </div>
+            </div>
+
+            <div class="modulos-section">
+              <h5>Módulos Activos ({{ selectedSuscripcion.modulos?.length || 0 }})</h5>
+              <div class="modulos-grid">
+                <div *ngFor="let modulo of (selectedSuscripcion.modulos || [])" class="modulo-item">
+                  <div class="modulo-info">
+                    <span class="modulo-name">{{ modulo.nombre }}</span>
+                    <span class="modulo-status" [ngClass]="'status-' + modulo.estado.toLowerCase()">
+                      {{ modulo.estado }}
+                    </span>
+                  </div>
+                  <button 
+                    class="btn btn-danger btn-sm" 
+                    (click)="removeModuloFromSuscripcion(modulo.id)"
+                    title="Eliminar módulo">
+                    🗑️
+                  </button>
+                </div>
+                <div *ngIf="!selectedSuscripcion.modulos || selectedSuscripcion.modulos.length === 0" class="empty-state">
+                  <p>No hay módulos asignados a esta suscripción</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
+  </div>
+
+  <!-- Add Modulos Modal -->
+  <div *ngIf="showAddModulosModal" class="modal-overlay" (click)="closeAddModulosModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Agregar Módulos</h3>
+        <button class="close-btn" (click)="closeAddModulosModal()">×</button>
+      </div>
+      
+      <div class="modal-body">
+        <p>Selecciona los módulos que deseas agregar a la suscripción:</p>
+        
+        <div class="available-modulos">
+          <div *ngFor="let modulo of availableModulos" class="modulo-option">
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                [value]="modulo.id"
+                (change)="toggleModuloSelection(modulo.id)"
+                [checked]="selectedModulos.includes(modulo.id)">
+              <span class="checkmark"></span>
+              <div class="modulo-details">
+                <span class="modulo-name">{{ modulo.nombre }}</span>
+                <span class="modulo-status" [ngClass]="'status-' + modulo.estado.toLowerCase()">
+                  {{ modulo.estado }}
+                </span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div *ngIf="availableModulos.length === 0" class="empty-state">
+          <p>No hay módulos disponibles para agregar</p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeAddModulosModal()">
+          Cancelar
+        </button>
+        <button 
+          class="btn btn-primary" 
+          (click)="addModulosToSuscripcion()"
+          [disabled]="selectedModulos.length === 0">
+          Agregar {{ selectedModulos.length }} módulo(s)
+        </button>
+      </div>
+    </div>
   </div>
 </div>
