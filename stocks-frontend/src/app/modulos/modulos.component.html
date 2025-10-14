@@ -20,24 +20,38 @@
     </header>
     <main class="content">
 <h2 style='margin-top:6px;margin-bottom:18px'>Gestión de Módulos</h2>
-  <div class="toolbar"><div class="small">Admin / Módulos</div><button class="btn">+ Nuevo Módulo</button></div>
+  <div class="toolbar"><div class="small">Admin / Módulos</div><button class="btn" (click)="abrirModalNuevo()">+ Nuevo Módulo</button></div>
   <table class="table">
     <thead><tr><th>Nombre</th><th>Nº de Plazas</th><th>Estado</th><th>Acciones</th></tr></thead>
     <tbody>
-      <tr><td>Inventario</td><td>15</td><td><span class="status active">Activo</span></td><td class="actions"><button title="Editar">✏️</button><button title="Eliminar">🗑️</button></td></tr>
-      <tr><td>Parqueaderos</td><td>9</td><td><span class="status dev">En desarrollo</span></td><td class="actions"><button>✏️</button><button>🗑️</button></td></tr>
-      <tr><td>Facturación</td><td>22</td><td><span class="status active">Activo</span></td><td class="actions"><button>✏️</button><button>🗑️</button></td></tr>
+      <tr *ngFor="let modulo of modulos">
+        <td>{{ modulo.nombre }}</td>
+        <td>{{ modulo.plazas }}</td>
+        <td>
+            <span class="status" [class]="obtenerClaseEstado(modulo.estado)">
+              {{ modulo.estado }}
+            </span>
+        </td>
+        <td class="actions">
+            <button title="Editar" (click)="abrirModalEdicion(modulo)">✏️</button>
+            <button title="Eliminar" (click)="eliminarModulo(modulo)">🗑️</button>
+        </td>
+      </tr>
     </tbody>
   </table>
   <div style="margin-top:18px">
-    <div class="modal" role="dialog" aria-modal="true" aria-label="Editar módulo (ejemplo)">
-      <h3 style="margin-top:0">Editar Módulo</h3>
-      <div class="form-row"><label>Nombre</label><input class="input" value="Inventario"></div>
-      <div class="form-row"><label>Descripción</label><textarea class="input" rows="3">Gestión de productos y stock.</textarea></div>
-      <div class="form-row"><label>Estado</label><select><option>Activo</option><option>En desarrollo</option><option>Inactivo</option></select></div>
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Editar módulo (ejemplo)" *ngIf="modalAbierto && moduloAEditar">
+      <h3 style="margin-top:0">{{ moduloAEditar.id === -1 ? 'Nuevo Módulo' : 'Editar Módulo' }}</h3>
+      <div class="form-row"><label>Nombre</label><input class="input" [(ngModel)]="moduloAEditar.nombre"></div>
+      <div class="form-row"><label>Descripción</label><textarea class="input" rows="3" [(ngModel)]="moduloAEditar.descripcion"></textarea></div>
+      <div class="form-row"><label>Estado</label>
+        <select [(ngModel)]="moduloAEditar.estado"><option *ngFor="let estado of estadosDisponibles" [ngValue]="estado">
+            {{ estado }}
+          </option>
+        </select></div>
       <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
-        <button class="btn" style="background:#e0e0e0;color:#333">Cancelar</button>
-        <button class="btn">Guardar</button>
+        <button class="btn" style="background:#e0e0e0;color:#333" (click)="cerrarModal()">Cancelar</button>
+        <button class="btn" (click)="guardarCambios()">Guardar</button>
       </div>
     </div>
   </div>

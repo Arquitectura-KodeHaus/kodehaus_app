@@ -2,7 +2,8 @@ package com.kodehaus.stocksbackend.dto;
 
 public record UpdateModuloReq(
         String nombre,
-        String estado
+        String estado,
+        String descripcion
 ) {
 }
 

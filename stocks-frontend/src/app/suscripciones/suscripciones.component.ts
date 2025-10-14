@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SuscripcionService } from '../services/suscripcion.service';
 import { ModuloService } from '../services/modulo.service';
-import { Suscripcion, ModuloInfoDTO } from '../models/Suscripcion';
+import { Suscripcion } from '../models/Suscripcion';
+import { Modulo } from '../models/modulo';
 import { AddModulosRequest } from '../models/AddModulosRequest';
 
 @Component({
@@ -16,7 +17,7 @@ import { AddModulosRequest } from '../models/AddModulosRequest';
 export class SuscripcionesComponent implements OnInit {
   suscripciones: Suscripcion[] = [];
   selectedSuscripcion: Suscripcion | null = null;
-  availableModulos: ModuloInfoDTO[] = [];
+  availableModulos: Modulo[] = [];
   selectedModulos: number[] = [];
   loading = false;
   showAddModulosModal = false;
