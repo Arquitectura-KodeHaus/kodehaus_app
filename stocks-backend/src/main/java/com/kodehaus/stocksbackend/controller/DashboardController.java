@@ -1,9 +1,16 @@
 package com.kodehaus.stocksbackend.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import com.kodehaus.stocksbackend.dto.ModuloDTO;
+import com.kodehaus.stocksbackend.model.Modulo;
+import com.kodehaus.stocksbackend.service.ModuloService;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -15,33 +22,51 @@ public class DashboardController {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private ModuloService moduloService;
     @GetMapping("/modulos-activos")
     public Map<String, Object> getModulosActivos() {
-         String sql = "SELECT COUNT(*) AS cantidad_modulos_activos FROM modulo WHERE estado = 'activo'";
-        return jdbcTemplate.queryForMap(sql);
+        List<ModuloDTO> modulos = moduloService.findAll();
+
+        long activos = modulos.stream()
+                .filter(m -> "Activo".equalsIgnoreCase(m.estado()))
+                .count();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("cantidad_modulos_activos", activos);
+        return response;
     }
+
+    
     @GetMapping("/modulo-mas-usado")
     public Map<String, Object> getModuloMasUsado() {
-    String sql = """
-        SELECT m.nombre, COUNT(pm.id_plaza) AS usos
-        FROM plaza_modulo pm
-        JOIN modulo m ON pm.id_modulo = m.id
-        GROUP BY m.nombre
-        ORDER BY usos DESC
-        LIMIT 1
-        """;
+        List<ModuloDTO> modulos = moduloService.findAll();
 
-    Map<String, Object> result = new HashMap<>();
-    try {
-        Map<String, Object> row = jdbcTemplate.queryForMap(sql);
-        result.put("nombre", row.get("nombre"));
-        result.put("usos", row.get("usos"));
-    } catch (Exception e) {
-        result.put("nombre", "Sin datos");
-        result.put("usos", 0);
+        if (modulos.isEmpty()) {
+            Map<String, Object> empty = new HashMap<>();
+            empty.put("nombre", "Sin datos");
+            empty.put("numeroPlazas", 0L);
+            return empty;
+        }
+
+        // Encuentra el módulo con más plazas
+        ModuloDTO masUsado = modulos.stream()
+                .max(Comparator.comparingLong(ModuloDTO::numeroPlazas))
+                .orElse(modulos.get(0));
+
+        // Verifica si todos tienen el mismo número de plazas
+        boolean todosIguales = modulos.stream()
+                .allMatch(m -> m.numeroPlazas().equals(masUsado.numeroPlazas()));
+
+        // Usa el primero si todos son iguales
+        ModuloDTO seleccionado = todosIguales ? modulos.get(0) : masUsado;
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("nombre", seleccionado.nombre());
+        result.put("numeroPlazas", seleccionado.numeroPlazas());
+        return result;
     }
-    return result;
-}
 
 
     @GetMapping("/total-ganancias")

@@ -1,3 +1,5 @@
+import { Modulo } from "./modulo";
+
 export interface Suscripcion {
   id: number;
   periodicidad: string;
@@ -6,7 +8,7 @@ export interface Suscripcion {
   estado: string;
   plaza: PlazaInfoDTO;
   plan: PlanInfoDTO;
-  modulos: ModuloInfoDTO[];
+  modulos: Modulo[];
 }
 
 export interface PlazaInfoDTO {
@@ -32,11 +34,5 @@ export interface PlanInfoDTO {
   numModulos: number;
   numUsuarios: number;
   precio: number;
-}
-
-export interface ModuloInfoDTO {
-  id: number;
-  nombre: string;
-  estado: string;
 }
   
