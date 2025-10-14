@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 import { Plaza } from '../entity/Plaza';
+import { CreatePlaza } from '../entity/CreatePlaza';
 
 @Injectable({
   providedIn: 'root'
@@ -12,11 +13,11 @@ export class PlazasService {
 
   constructor(private http: HttpClient) {}
 
-  getPlazasActivas(): Observable<Plaza[]> {
+    getPlazasActivas(): Observable<Plaza[]> {
         return this.http.get<Plaza[]>(`${this.apiUrl}/find/activas`)
     }
     
-    crearPlaza(plaza: Plaza): Observable<Plaza> {
+    crearPlaza(plaza: CreatePlaza): Observable<Plaza> {
         return this.http.post<Plaza>(`${this.apiUrl}`, plaza);
     }
 

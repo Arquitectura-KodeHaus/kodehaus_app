@@ -49,7 +49,17 @@ public class PlanServiceImpl implements PlanService{
         if (plazaUpdateReq.tipo() != null) {
             existingPlan.setTipo(plazaUpdateReq.tipo());
         }
+        if (plazaUpdateReq.numModulos() != 0) {
+            existingPlan.setNumModulos(plazaUpdateReq.numModulos());
+        }
+        if (plazaUpdateReq.numUsuarios() != 0) {
+            existingPlan.setNumUsuarios(plazaUpdateReq.numUsuarios());
+        }
+        if (plazaUpdateReq.precio() != 0) {
+            existingPlan.setPrecio(plazaUpdateReq.precio());
+        }
         Plan updatedPlan = planRepository.save(existingPlan);
+        
         return planMapper.toDto(updatedPlan);
     }
 

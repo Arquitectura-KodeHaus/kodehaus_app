@@ -24,14 +24,6 @@ public class Plaza {
     @JoinColumn(name = "id_ubicacion")
     private Ubicacion ubicacion;
 
-    @OneToMany(mappedBy = "plaza", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "plaza", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Suscripcion> suscripciones;
-
-    @ManyToMany
-    @JoinTable(
-        name = "plaza_modulo",
-        joinColumns = @JoinColumn(name = "id_plaza"),
-        inverseJoinColumns = @JoinColumn(name = "id_modulo")
-    )
-    private List<Modulo> modulos;
 }
