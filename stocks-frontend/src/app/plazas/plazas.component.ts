@@ -6,6 +6,7 @@ import { Plaza } from '../entity/Plaza';
 import { CreatePlaza } from '../entity/CreatePlaza';
 import { Plan } from '../models/plan';
 import { FormsModule } from '@angular/forms';
+import { Modulo } from '../models/modulo';
 
 
 @Component({
@@ -58,6 +59,8 @@ export class PlazasComponent implements OnInit {
   modfiyId: bigint;
 
   listaPlazas: Plaza[];
+
+  modulosPlaza: Modulo[] = [];
 
   ngOnInit(){
     // Load plazas
