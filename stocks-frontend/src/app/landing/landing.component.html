@@ -1,0 +1,58 @@
+<div class="app">
+    <header>
+        <aside class="headerLanding">
+            <button class="btn" (click)="toggleLoginForm()">Iniciar Sesion</button>
+            <button class="btn" (click)="toggleRegisterForm()">Crear Cuenta</button>
+        </aside>
+    </header>
+
+    <body>
+        @if(showLogin){
+            <div
+                class="modal"
+                role="dialog"
+                aria-modal="true"
+                aria-label="Registrar Plaza (ejemplo)">
+
+                <form (ngSubmit)="crearCuenta()">
+                <h3 style="margin-top: 0">Inicio de Sesion</h3>
+
+                <div
+                    style="
+                    display: flex;
+                    gap: 8px;
+                    justify-content: flex-end;
+                    margin-top: 12px;
+                    ">
+                    <button class="btn" style="background: #e0e0e0; color: #333" (click)="toggleLoginForm()">Cancelar</button>
+                    <button class="btn" routerLink="/dashboard">Iniciar Sesion</button>
+                </div>
+                </form>
+            </div>
+            }
+
+        @if(showRegister){
+            <div
+                class="modal"
+                role="dialog"
+                aria-modal="true"
+                aria-label="Registrar Plaza (ejemplo)">
+
+                <form (ngSubmit)="crearCuenta()">
+                <h3 style="margin-top: 0">Crear Nueva Cuenta</h3>
+
+                <div
+                    style="
+                    display: flex;
+                    gap: 8px;
+                    justify-content: flex-end;
+                    margin-top: 12px;
+                    ">
+                    <button class="btn" style="background: #e0e0e0; color: #333" (click)="toggleRegisterForm()">Cancelar</button>
+                    <button class="btn">Crear Cuenta</button>
+                </div>
+                </form>
+            </div>
+            } 
+    </body>
+</div>
