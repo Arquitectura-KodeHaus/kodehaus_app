@@ -30,7 +30,7 @@ public class PlazaServiceImpl implements PlazaService {
 
     @Override
     public List<PlazaDTO> findAll() {
-        return plazaRepository.findAll().stream()
+        return plazaRepository.findAllWithUbicacion().stream()
             .map(plazaMapper::toDto)
             .collect(Collectors.toList());
     }

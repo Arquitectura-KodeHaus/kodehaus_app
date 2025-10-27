@@ -1,0 +1,222 @@
+{
+  "info": {
+    "name": "PlazApp - Gestión de Gerentes",
+    "description": "Colección de endpoints para gestionar gerentes de plazas",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Crear Gerente",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Juan\",\n  \"apellido\": \"Pérez\",\n  \"email\": \"juan.perez@plazapp.com\",\n  \"password\": \"Password123!\",\n  \"telefono\": \"+57 300 123 4567\",\n  \"identificacion\": \"1234567890\",\n  \"idPlaza\": 1\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/gerentes",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "gerentes"]
+        }
+      }
+    },
+    {
+      "name": "Crear Gerente Sin Plaza",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"María\",\n  \"apellido\": \"García\",\n  \"email\": \"maria.garcia@plazapp.com\",\n  \"password\": \"Password456!\",\n  \"telefono\": \"+57 310 987 6543\",\n  \"identificacion\": \"9876543210\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/gerentes",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "gerentes"]
+        }
+      }
+    },
+    {
+      "name": "Obtener Todos los Gerentes",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/gerentes",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "gerentes"]
+        }
+      }
+    },
+    {
+      "name": "Obtener Gerente por ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/gerentes/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "gerentes", "1"]
+        }
+      }
+    },
+    {
+      "name": "Obtener Gerente por Email",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/gerentes/email/juan.perez@plazapp.com",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "gerentes", "email", "juan.perez@plazapp.com"]
+        }
+      }
+    },
+    {
+      "name": "Obtener Gerente por Plaza",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/gerentes/plaza/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "gerentes", "plaza", "1"]
+        }
+      }
+    },
+    {
+      "name": "Obtener Gerentes Activos",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/gerentes/estado/ACTIVO",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "gerentes", "estado", "ACTIVO"]
+        }
+      }
+    },
+    {
+      "name": "Actualizar Gerente",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Juan Carlos\",\n  \"apellido\": \"Pérez López\",\n  \"telefono\": \"+57 300 999 8888\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/gerentes/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "gerentes", "1"]
+        }
+      }
+    },
+    {
+      "name": "Asignar Plaza a Gerente",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/gerentes/2/asignar-plaza/2",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "gerentes", "2", "asignar-plaza", "2"]
+        }
+      }
+    },
+    {
+      "name": "Cambiar Estado a SUSPENDIDO",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"estado\": \"SUSPENDIDO\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/gerentes/1/estado",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "gerentes", "1", "estado"]
+        }
+      }
+    },
+    {
+      "name": "Cambiar Estado a ACTIVO",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"estado\": \"ACTIVO\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/gerentes/1/estado",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "gerentes", "1", "estado"]
+        }
+      }
+    },
+    {
+      "name": "Eliminar Gerente",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/gerentes/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "gerentes", "1"]
+        }
+      }
+    }
+  ]
+}

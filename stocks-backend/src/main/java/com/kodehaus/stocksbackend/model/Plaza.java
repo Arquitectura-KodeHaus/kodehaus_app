@@ -39,6 +39,9 @@ public class Plaza {
         inverseJoinColumns = @JoinColumn(name = "id_modulo")
     )
     private List<Modulo> modulos;
+
+    @OneToOne(mappedBy = "plaza", fetch = FetchType.LAZY)
+    private Gerente gerente;
     
     @PrePersist
     protected void onCreate() {

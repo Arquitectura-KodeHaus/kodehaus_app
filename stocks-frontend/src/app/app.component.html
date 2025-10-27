@@ -5,6 +5,7 @@
       <ul>
         <li (click)="show('dashboard')" [class.active]="currentView==='dashboard'">Dashboard</li>
         <li (click)="show('suscripciones')" [class.active]="currentView==='suscripciones'">Suscripciones</li>
+        <li (click)="show('gerentes')" [class.active]="currentView==='gerentes'">Gerentes</li>
       </ul>
     </nav>
   </aside>
@@ -13,11 +14,13 @@
     <header class="page-header">
       <h1 *ngIf="currentView==='dashboard'">Dashboard</h1>
       <h1 *ngIf="currentView==='suscripciones'">Gestión de Suscripciones</h1>
+      <h1 *ngIf="currentView==='gerentes'">Gestión de Gerentes</h1>
     </header>
 
     <section class="content">
       <app-dashboard *ngIf="currentView==='dashboard'"></app-dashboard>
       <app-suscripciones *ngIf="currentView==='suscripciones'"></app-suscripciones>
+      <app-gerentes *ngIf="currentView==='gerentes'"></app-gerentes>
     </section>
   </main>
 </div>
