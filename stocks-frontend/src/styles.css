@@ -53,6 +53,23 @@ body,html{
   gap:18px
 }
 
+.headerLanding{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;            /* full width */
+  height: 60px;           /* adjust as needed */
+  background:var(--header-bg);
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  color: white;
+  padding: 12px 24px;
+  display: flex;
+  gap: 18px;
+  z-index: 1000;  
+}
+
 .logo{
   font-weight:700;
   font-size:18px;
