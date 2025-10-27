@@ -150,25 +150,7 @@ Operaciones implementadas:
 └─────────────────┘
 ```
 
-## 🚀 Próximos Pasos
 
-### Corto Plazo
-- [ ] Implementar encriptación de passwords (BCrypt)
-- [ ] Agregar validaciones @Valid en DTOs
-- [ ] Crear endpoint de login
-- [ ] Implementar JWT para autenticación
-
-### Mediano Plazo
-- [ ] Dashboard para gerentes
-- [ ] Gestión de módulos habilitados por plaza
-- [ ] Integración con servicio de notificaciones
-- [ ] Reportes de actividad de gerentes
-
-### Largo Plazo
-- [ ] Implementar servicio de pagos (mock)
-- [ ] Implementar servicio de plaza
-- [ ] Implementar servicio de locales
-- [ ] Implementar servicio de parqueaderos
 
 ## 📝 Notas de Implementación
 
