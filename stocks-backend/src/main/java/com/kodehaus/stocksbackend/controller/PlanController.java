@@ -30,21 +30,28 @@ public class PlanController {
     private PlanService planService;
 
     @PostMapping
-    public ResponseEntity<PlanDTO> create(@RequestBody CreatePlanReq plazaReq) {
-        PlanDTO newPlaza = planService.create(plazaReq);
-        return new ResponseEntity<>(newPlaza, HttpStatus.CREATED); 
+    public ResponseEntity<PlanDTO> create(@RequestBody CreatePlanReq planReq) {
+        PlanDTO newPlan = planService.create(planReq);
+        return new ResponseEntity<>(newPlan, HttpStatus.CREATED); 
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PlanDTO> findById(@PathVariable Long id) {
+        System.out.println("Received ID: " + id);
+        PlanDTO planes = planService.findById(id);
+        return ResponseEntity.ok(planes);
     }
 
     @GetMapping
     public ResponseEntity<List<PlanDTO>> findAll() {
-        List<PlanDTO> plazas = planService.findAll();
-        return ResponseEntity.ok(plazas);
+        List<PlanDTO> planes = planService.findAll();
+        return ResponseEntity.ok(planes);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PlanDTO> update(@PathVariable Long id, @RequestBody CreatePlanReq plazaReq) {
+    public ResponseEntity<PlanDTO> update(@PathVariable Long id, @RequestBody CreatePlanReq planReq) {
         try {            
-            PlanDTO updatedPlaza = planService.update(id, plazaReq);
+            PlanDTO updatedPlaza = planService.update(id, planReq);
             return ResponseEntity.ok(updatedPlaza);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build(); 

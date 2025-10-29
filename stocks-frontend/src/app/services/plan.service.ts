@@ -15,6 +15,10 @@ import { Plan } from "../models/plan";
     getPlanes(): Observable<Plan[]> {
       return this.http.get<Plan[]>(this.apiUrl);
     }
+
+    findPlan(id: number): Observable<Plan> {
+      return this.http.get<Plan>(`${this.apiUrl}/${id}`);
+    }
   
     createPlan(plan: Plan): Observable<Plan[]> {
       return this.http.post<Plan[]>(`${this.apiUrl}`, plan);
