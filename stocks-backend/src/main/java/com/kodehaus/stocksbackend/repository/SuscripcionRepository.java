@@ -5,8 +5,6 @@ import org.springframework.data.jpa.repository.Query;
 import com.kodehaus.stocksbackend.model.Suscripcion;
 import java.util.List;
 
-import java.util.List;
-
 public interface SuscripcionRepository extends JpaRepository<Suscripcion, Long> {
     
     @Query("SELECT s FROM Suscripcion s " +

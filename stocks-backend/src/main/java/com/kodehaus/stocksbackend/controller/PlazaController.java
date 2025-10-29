@@ -21,6 +21,7 @@ import com.kodehaus.stocksbackend.dto.UpdatePlazaReq;
 import com.kodehaus.stocksbackend.service.PlazaService;
 
 import jakarta.persistence.EntityNotFoundException;
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/plazas")
 public class PlazaController {
