@@ -1,87 +1,65 @@
 package com.kodehaus.stocksbackend.controller;
 
-import com.kodehaus.stocksbackend.dto.CreateSuscripcionReq;
 import com.kodehaus.stocksbackend.dto.SuscripcionDTO;
-import com.kodehaus.stocksbackend.dto.UpdateSuscripcionReq;
+import com.kodehaus.stocksbackend.dto.AddModulosRequest;
 import com.kodehaus.stocksbackend.service.SuscripcionService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/suscripciones")
-@RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
 public class SuscripcionController {
 
-    private final SuscripcionService suscripcionService;
+    @Autowired
+    private SuscripcionService suscripcionService;
 
     @GetMapping
-    public ResponseEntity<List<SuscripcionDTO>> getAllSuscripciones(
-            @RequestParam(required = false) String estado,
-            @RequestParam(required = false) String estadoPago) {
-        
-        List<SuscripcionDTO> suscripciones;
-        
-        if (estado != null) {
-            suscripciones = suscripcionService.findByEstado(estado);
-        } else if (estadoPago != null) {
-            suscripciones = suscripcionService.findByEstadoPago(estadoPago);
-        } else {
-            suscripciones = suscripcionService.findAll();
+    public ResponseEntity<List<SuscripcionDTO>> getAllSuscripciones() {
+        try {
+            List<SuscripcionDTO> suscripciones = suscripcionService.getAllSuscripciones();
+            return ResponseEntity.ok(suscripciones);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
-        
-        return ResponseEntity.ok(suscripciones);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<SuscripcionDTO> getSuscripcionById(@PathVariable Long id) {
-        return suscripcionService.findById(id)
-                .map(suscripcion -> ResponseEntity.ok(suscripcion))
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @PostMapping
-    public ResponseEntity<SuscripcionDTO> createSuscripcion(@RequestBody CreateSuscripcionReq request) {
         try {
-            SuscripcionDTO created = suscripcionService.create(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(created);
+            SuscripcionDTO suscripcion = suscripcionService.getSuscripcionById(id);
+            return ResponseEntity.ok(suscripcion);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<SuscripcionDTO> updateSuscripcion(
-            @PathVariable Long id,
-            @RequestBody UpdateSuscripcionReq request) {
+    @PostMapping("/{id}/modulos")
+    public ResponseEntity<String> addModulosToSuscripcion(@PathVariable Long id, @RequestBody AddModulosRequest request) {
         try {
-            return suscripcionService.update(id, request)
-                    .map(updated -> ResponseEntity.ok(updated))
-                    .orElse(ResponseEntity.notFound().build());
+            suscripcionService.addModulosToSuscripcion(id, request);
+            return ResponseEntity.ok("Módulos agregados exitosamente a la suscripción");
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error interno del servidor");
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSuscripcion(@PathVariable Long id) {
-        if (suscripcionService.delete(id)) {
-            return ResponseEntity.noContent().build();
+    @DeleteMapping("/{suscripcionId}/modulos/{moduloId}")
+    public ResponseEntity<String> removeModuloFromSuscripcion(@PathVariable Long suscripcionId, @PathVariable Long moduloId) {
+        try {
+            suscripcionService.removeModuloFromSuscripcion(suscripcionId, moduloId);
+            return ResponseEntity.ok("Módulo eliminado exitosamente de la suscripción");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error interno del servidor");
         }
-        return ResponseEntity.notFound().build();
-    }
-
-    @GetMapping("/stats")
-    public ResponseEntity<Map<String, Object>> getStats() {
-        Map<String, Object> stats = Map.of(
-            "vigentes", suscripcionService.countVigentes(),
-            "enMora", suscripcionService.countEnMora(),
-            "total", suscripcionService.findAll().size()
-        );
-        return ResponseEntity.ok(stats);
     }
 }

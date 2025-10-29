@@ -5,14 +5,16 @@ import { SuscripcionesComponent } from './suscripciones/suscripciones.component'
 import { GerentesComponent } from './gerentes/gerentes.component';
 import { StockService } from './services/stock.service';
 import { Stock } from './models/stock';
+import { RouterOutlet } from "@angular/router";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, DashboardComponent, SuscripcionesComponent, GerentesComponent],
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrl: './app.component.css'
 })
+
 export class AppComponent implements OnInit {
   readonly title = 'Stocks dashboard';
   stocks: Stock[] = [];

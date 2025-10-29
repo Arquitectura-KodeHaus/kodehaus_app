@@ -13,8 +13,8 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOriginPatterns(
                     "http://localhost:*",
-                    "https://storage.googleapis.com",
-                    "https://stocks-frontend-bucket.storage.googleapis.com",
+                    "https://*.run.app",  // ← Cloud Run URLs
+                    "https://storage.googleapis.com",  // ← Por si acaso
                     "https://*.storage.googleapis.com"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD")

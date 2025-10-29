@@ -3,6 +3,7 @@ package com.kodehaus.stocksbackend.model;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "suscripcion")
@@ -34,14 +35,13 @@ public class Suscripcion {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_plan", nullable = false)
     private Plan plan;
-    
-    // Método helper para determinar estado de pago
-    public String getEstadoPago() {
-        if (fechaUltimoPago == null) return "Sin pago";
-        if (fechaRenovacion != null && fechaRenovacion.isBefore(LocalDate.now())) {
-            return "En mora";
-        }
-        return "Al día";
-    }
+
+    @ManyToMany
+    @JoinTable(
+        name = "suscripcion_modulo",
+        joinColumns = @JoinColumn(name = "id_suscripcion"),
+        inverseJoinColumns = @JoinColumn(name = "id_modulo")
+    )
+    private List<Modulo> modulos;
 }
 

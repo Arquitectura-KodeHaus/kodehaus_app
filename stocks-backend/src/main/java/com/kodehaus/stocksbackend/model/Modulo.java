@@ -16,8 +16,9 @@ public class Modulo {
 
     private String nombre;
     private String estado;
+    private String descripcion;
 
     @ManyToMany(mappedBy = "modulos")
-    private List<Plaza> plazas;
+    private List<Suscripcion> suscripciones;
 }
 

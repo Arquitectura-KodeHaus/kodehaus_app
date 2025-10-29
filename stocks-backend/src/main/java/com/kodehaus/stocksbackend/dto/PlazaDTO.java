@@ -10,7 +10,8 @@ public record PlazaDTO(
     LocalDateTime fechaCreacion,
     String departamento,
     String ciudad,
-    String direccion
+    String direccion,
+    String plan
     ) {
 
 }

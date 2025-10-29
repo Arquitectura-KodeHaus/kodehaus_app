@@ -29,22 +29,6 @@ public class Plaza {
     @JoinColumn(name = "id_ubicacion", nullable = false)
     private Ubicacion ubicacion;
 
-    @OneToMany(mappedBy = "plaza", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "plaza", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Suscripcion> suscripciones;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "plaza_modulo",
-        joinColumns = @JoinColumn(name = "id_plaza"),
-        inverseJoinColumns = @JoinColumn(name = "id_modulo")
-    )
-    private List<Modulo> modulos;
-
-    @OneToOne(mappedBy = "plaza", fetch = FetchType.LAZY)
-    private Gerente gerente;
-    
-    @PrePersist
-    protected void onCreate() {
-        fechaCreacion = LocalDateTime.now();
-    }
 }
