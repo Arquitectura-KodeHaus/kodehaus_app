@@ -69,7 +69,7 @@ public class PlazaServiceImpl implements PlazaService {
         plaza.setNombre(plazaReq.nombre());
         plaza.setContacto(plazaReq.contacto());
         plaza.setDominio(plazaReq.dominio());
-        plaza.setFechaCreacion(LocalDate.now()); // Asignación de fecha en el Backend
+        plaza.setFechaCreacion(LocalDateTime.now()); // Asignación de fecha en el Backend
         plaza.setUbicacion(savedUbicacion); // Enlace de la relación
 
         // 3. Persistencia y Respuesta

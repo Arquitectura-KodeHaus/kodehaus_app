@@ -1,4 +1,6 @@
 package com.kodehaus.stocksbackend.controller;
+
+import com.kodehaus.stocksbackend.service.SuscripcionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,9 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-
-@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/dashboard")
 public class DashboardController {
@@ -70,19 +69,25 @@ public class DashboardController {
 
 
     @GetMapping("/total-ganancias")
-public Map<String, Object> getTotalGanancias() {
-    String sql = """
-        SELECT COALESCE(SUM(p.precio), 0) AS total
-        FROM suscripcion s
-        JOIN plan p ON s.id_plan = p.id
-        WHERE s.estado = 'activa'
-    """;
+    public Map<String, Object> getTotalGanancias() {
+        String sql = """
+            SELECT COALESCE(SUM(p.precio), 0) AS total
+            FROM suscripcion s
+            JOIN plan p ON s.id_plan = p.id
+            WHERE s.estado = 'Vigente'
+            """;
 
-    Double total = jdbcTemplate.queryForObject(sql, Double.class);
-    Map<String, Object> result = new HashMap<>();
-    result.put("total", total);
-    return result;
-}
+        try {
+            Double total = jdbcTemplate.queryForObject(sql, Double.class);
+            Map<String, Object> result = new HashMap<>();
+            result.put("total", total != null ? total : 0.0);
+            return result;
+        } catch (Exception e) {
+            Map<String, Object> result = new HashMap<>();
+            result.put("total", 0.0);
+            return result;
+        }
+    }
 
     @GetMapping("/plazas-activas")
     public Map<String, Object> getPlazasActivas() {

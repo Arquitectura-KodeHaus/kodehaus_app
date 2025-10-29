@@ -1,6 +1,35 @@
-# 🏢 Kodehaus App - Stock Platform
+# 🏢 PlazApp - Sistema SaaS para Gestión de Plazas de Mercado
 
-Plataforma de gestión de stocks construida con **Spring Boot** (backend) y **Angular** (frontend), pensada para desplegarse en **Google Cloud Platform (GCP)**.
+Plataforma SaaS multi-tenant construida con **Spring Boot** (backend) y **Angular** (frontend), pensada para desplegarse en **Google Cloud Platform (GCP)**.
+
+## 🎯 Acerca del Proyecto
+
+PlazApp es un sistema multi-servicio diseñado para gestionar plazas de mercado bajo un modelo SaaS. El sistema permite al dueño del software administrar múltiples plazas, sus gerentes, suscripciones y módulos habilitados.
+
+### Servicios Planificados
+
+1. **🏢 Servicio del Sistema (Dueño del software)** ✅ **IMPLEMENTADO**
+   - Gestión de plazas y gerentes
+   - Administración de suscripciones y planes
+   - Control de módulos habilitados por plaza
+   - Facturación y pagos
+
+2. **🏬 Servicio de Plaza** (Próximamente)
+   - Gestión de información de la plaza
+   - Administración de usuarios (comerciantes, empleados)
+   - Boletín de precios
+
+3. **🧾 Servicio de Locales** (Próximamente)
+   - Gestión de inventario
+   - Ventas y empleados por local
+
+4. **💳 Servicio de Pagos (Mock)** (Próximamente)
+   - Simulación de pasarela de pago
+   - Registro de transacciones
+
+5. **🚗 Servicio de Parqueaderos (Mock)** (Próximamente)
+   - Control de entradas/salidas
+   - Reportes de ocupación
 
 ## 🏗️ Arquitectura
 
@@ -79,7 +108,37 @@ El backend expone la API REST para gestionar stocks y un endpoint `/health` que 
    ```
 4. Abre `http://localhost:4200` en tu navegador.
 
-## 🔄 Flujo de trabajo recomendado
+## � Funcionalidades Implementadas
+
+### ✅ Servicio del Sistema
+
+#### Gestión de Plazas
+- CRUD completo de plazas de mercado
+- Asignación de ubicaciones
+- Gestión de módulos por plaza
+
+#### Gestión de Gerentes ⭐ **NUEVO**
+- Crear cuentas de gerentes
+- Asignar gerentes a plazas (relación 1:1)
+- Control de estados: ACTIVO, INACTIVO, SUSPENDIDO
+- Validación de email e identificación únicos
+- Endpoints para búsqueda y filtrado
+
+Ver documentación detallada en:
+- 📚 [API de Gerentes](./API_GERENTES.md)
+- 📝 [Guía de Implementación](./IMPLEMENTACION_GERENTES.md)
+- 🧪 [Colección Postman](./stocks-backend/postman_gerentes_collection.json)
+
+#### Gestión de Módulos
+- CRUD de módulos del sistema
+- Habilitación/deshabilitación por plaza
+
+#### Gestión de Suscripciones
+- Creación de suscripciones
+- Control de periodicidad y renovación
+- Estados de pago
+
+## �🔄 Flujo de trabajo recomendado
 
 1. Asegúrate de tener la rama actualizada con `main` (`git pull origin main`).
 2. Desarrolla tus cambios en tu rama feature y agrega tests si corresponde.
@@ -91,7 +150,38 @@ El backend expone la API REST para gestionar stocks y un endpoint `/health` que 
    ```
 4. Crea un Pull Request en GitHub. El pipeline de CI/CD validará el `/health` y los builds.
 
-## 🚀 Deployment
+## � Estructura del Proyecto
+
+```
+kodehaus_app/
+├── stocks-backend/               # Backend Spring Boot
+│   ├── src/main/java/
+│   │   └── com/kodehaus/stocksbackend/
+│   │       ├── model/           # Entidades JPA
+│   │       │   ├── Plaza.java
+│   │       │   ├── Gerente.java ⭐ NUEVO
+│   │       │   ├── Modulo.java
+│   │       │   ├── Plan.java
+│   │       │   └── Suscripcion.java
+│   │       ├── repository/      # Repositorios
+│   │       ├── service/         # Lógica de negocio
+│   │       ├── controller/      # REST Controllers
+│   │       ├── dto/            # Data Transfer Objects
+│   │       └── utils/          # Mappers y utilidades
+│   ├── src/main/resources/
+│   │   ├── application.properties
+│   │   └── db/migration/       # Scripts SQL
+│   └── postman_*.json          # Colecciones Postman
+├── stocks-frontend/             # Frontend Angular
+│   └── src/app/
+│       ├── dashboard/
+│       ├── suscripciones/
+│       └── services/
+├── API_GERENTES.md             # Documentación API Gerentes ⭐
+└── IMPLEMENTACION_GERENTES.md  # Guía de implementación ⭐
+```
+
+## �🚀 Deployment
 
 Cuando los cambios se fusionan en `main`:
 
@@ -100,8 +190,41 @@ Cuando los cambios se fusionan en `main`:
 
 Cada despliegue usa el endpoint `/health` para validar la aplicación antes de exponerla.
 
-## 🤝 Soporte y buenas prácticas
+## � Testing
+
+### Backend
+```bash
+cd stocks-backend
+./mvnw test
+```
+
+### Postman Collections
+- `postman_collection.json` - Endpoints generales
+- `postman_gerentes_collection.json` - Endpoints de gerentes ⭐
+
+### Base de Datos
+Ejecutar scripts en orden:
+1. Crear tablas base (Plaza, Ubicacion, etc.)
+2. `create_table_gerente.sql` ⭐ - Tabla de gerentes
+
+## �🤝 Soporte y buenas prácticas
 
 - Mantén las credenciales seguras; no las expongas en issues ni commits.
 - Usa el sandbox `test` para experimentar sin afectar producción.
 - Documenta en el PR cualquier configuración adicional que requiera el equipo.
+- Revisa la documentación específica de cada módulo antes de implementar cambios.
+
+## 🎯 Próximos Pasos
+
+- [ ] Implementar autenticación JWT para gerentes
+- [ ] Encriptación de contraseñas con BCrypt
+- [ ] Servicio de Plaza (segundo microservicio)
+- [ ] Servicio de Locales
+- [ ] Servicio de Pagos (Mock)
+- [ ] Servicio de Parqueaderos (Mock)
+- [ ] Dashboard para gerentes en el frontend
+
+---
+
+**Branch actual:** `feature/suscripciones`  
+**Última actualización:** 26 de Octubre de 2025

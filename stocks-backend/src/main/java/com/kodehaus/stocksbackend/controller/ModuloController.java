@@ -22,7 +22,6 @@ import com.kodehaus.stocksbackend.service.ModuloService;
 
 import jakarta.persistence.EntityNotFoundException;
 
-@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/modulos")
 public class ModuloController {
