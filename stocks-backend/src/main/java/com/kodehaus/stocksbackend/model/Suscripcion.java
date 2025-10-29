@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Table(name = "suscripcion")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,24 +15,17 @@ public class Suscripcion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private String periodicidad;
-    
-    @Column(name = "fecha_ultimo_pago")
     private LocalDate fechaUltimoPago;
-    
-    @Column(name = "fecha_renovacion")
     private LocalDate fechaRenovacion;
-    
-    @Column(nullable = false)
     private String estado;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_plaza", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "id_plaza")
     private Plaza plaza;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_plan", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "id_plan")
     private Plan plan;
 
     @ManyToMany
