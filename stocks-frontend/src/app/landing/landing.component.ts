@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { PlanService } from '../services/plan.service';
+import { PeticionService } from '../services/peticion.service';
 import { Plan } from '../models/plan';
+import { peticion } from '../models/peticion';
 
 @Component({
   selector: 'app-landing',
@@ -14,13 +16,19 @@ import { Plan } from '../models/plan';
 })
 export class LandingComponent {
 
-  constructor(private planesService: PlanService) {}
+  constructor(private planesService: PlanService, private PeticionService: PeticionService) {}
 
   showForm = false
 
   listaPlanes: Plan[] = [];
 
-  contactMail: string;
+  peticion: peticion = {
+      id: 0,
+      correo: '',
+      telefono: 0,
+      idPlan: 0,
+      plaza: ''
+    };
 
   ngOnInit(): void {
       this.planesService.getPlanes().subscribe({
@@ -35,15 +43,29 @@ export class LandingComponent {
       })
     }
 
-  toggleForm(): void{
+  toggleForm(id: number): void{
+    this.peticion.idPlan = id
     this.showForm = !this.showForm
   }
 
-  sendConfirmAlert(): void{
-    alert("Todo listo! Pronto un representante se comunicará con usted por medio de correo para guiarlo en el proceso de creacion de cuentas")
+  sendPetition(): void{
+    console.log("Peticion:", this.peticion)
+    this.PeticionService.crearPeticion(this.peticion).subscribe({
+      next: response => {
+        console.log('Peticion creada:', response);
+        alert("Todo listo! Pronto un representante se comunicará con usted por medio de correo para guiarlo en el proceso de creacion de cuentas")
+        window.location.reload();
+      },
+      error: err => {
+        console.error('Error al crear la peticion:', err);
+        alert("Ocurrió un error al enviar la peticion, por favor intente más tarde");
+        window.location.reload();
+      }
+    });
   }
 
   sendInfoAlert(): void{
     alert("Apreciamos su interes. Pronto un representante se comunicará con usted por medio del correo")
+    location.reload()
   }
 }
