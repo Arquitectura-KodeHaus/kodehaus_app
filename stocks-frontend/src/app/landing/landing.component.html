@@ -1,58 +1,150 @@
-<div class="app">
-    <header>
-        <aside class="headerLanding">
-            <button class="btn" (click)="toggleLoginForm()">Iniciar Sesion</button>
-            <button class="btn" (click)="toggleRegisterForm()">Crear Cuenta</button>
-        </aside>
+<body>
+    <div class="app">
+    <!-- Header -->
+    <header class="headerLanding">
+        <div>
+            <h1 class="logo">Papaya</h1>
+        </div>
+        <nav class="nav-links">
+            <a href="#papaya">Conozca Papaya</a>
+            <a href="#plans">Nuestros Planes</a>
+            <a href="#contact">Sobre Nosotros</a>
+        </nav>
     </header>
 
-    <body>
-        @if(showLogin){
-            <div
-                class="modal"
-                role="dialog"
-                aria-modal="true"
-                aria-label="Registrar Plaza (ejemplo)">
-
-                <form (ngSubmit)="crearCuenta()">
-                <h3 style="margin-top: 0">Inicio de Sesion</h3>
-
-                <div
-                    style="
-                    display: flex;
-                    gap: 8px;
-                    justify-content: flex-end;
-                    margin-top: 12px;
-                    ">
-                    <button class="btn" style="background: #e0e0e0; color: #333" (click)="toggleLoginForm()">Cancelar</button>
-                    <button class="btn" routerLink="/dashboard">Iniciar Sesion</button>
+    <div class="content">
+        <!-- Hero -->
+        <section id="papaya" class="hero">
+            <div class="hero-text">
+                <h2>Papaya</h2>
+                <h3>Facilitamos la administración de sus plazas de mercado</h3>
+                <p>
+                Nuestra plataforma está diseñada para digitalizar y optimizar la gestión de plazas de mercado, permitiendo a administradores, comerciantes y clientes conectarse de forma rápida, segura y eficiente.
+                </p>
+                <a href="#plans">Conozca nuestros planes</a>
+            </div>
+            
+            <div class="images-container">
+                <div class="image">
+                    <h4>💰 Gestionar cobros y pagos en línea</h4>
+                    <div class="image-box">
+                        <img src="../../assets/OPTPaloquemao_15112024_DiegoCuevas300.jpg">
+                    </div>
+                    <p>Facilita la facturación y el recaudo con herramientas digitales integradas y seguras.</p>
                 </div>
+
+                <div class="image">
+                    <h4>📈 Acceder a reportes en tiempo real</h4>
+                    <div class="image-box">
+                        <img src="../../assets/IMG_5890-1024x764.jpg">
+                    </div>
+                    <p>Visualiza el desempeño de cada comerciante, la rotación de puestos y los ingresos diarios o mensuales.</p>
+                </div>
+
+                <div class="image">
+                    <h4>📱 Conectarte desde cualquier lugar</h4>
+                    <div class="image-box">
+                        <img src="../../assets/plazas-de-mercado-1.jpg">
+                    </div>
+                    <p>Accede desde cualquier dispositivo, sin instalaciones complicadas, con solo una conexión a internet.</p>
+                </div>
+            </div>        
+        </section>
+
+        <!-- Plans -->
+        <section id="plans" class="plans-section">
+            <h2>Nuestros Planes</h2>
+            <h3>Nuestros planes garantizan satisfacer cualquier necesidad administrativa que tenga</h3>
+            @if (showForm) {
+                <div class="modal-overlay" (click)="toggleForm()">
+                    <div class="modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+                    <form (ngSubmit)="sendConfirmAlert()">
+                        <h4 style="margin-top: 0">Listo para empezar?</h4>
+                        <p>Ingrese su información de contacto, un representante de Papaya se comunicará con usted</p>
+                        <div class="form-row">
+                        <input
+                            type="email"
+                            class="Email"
+                            name="correo"
+                            [(ngModel)]="contactMail"
+                            placeholder="Su correo"
+                        />
+                        <input
+                            type="number"
+                            class="Email"
+                            name="correo"
+                            [(ngModel)]="contactMail"
+                            placeholder="Su telefono"
+                        />
+                        <input
+                            type="text"
+                            class="Email"
+                            name="correo"
+                            [(ngModel)]="contactMail"
+                            placeholder="Nombre de su plaza"
+                        />
+                        
+                        </div>
+                        <div class="modal-actions">
+                        <button class="btn cancel" (click)="toggleForm()">Cancelar</button>
+                        <button type="submit" class="btn">Enviar Petición</button>
+                        </div>
+                    </form>
+                    </div>
+                </div>
+                }
+                
+            <div class="toolbar">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Plan</th>
+                            <th>Precio</th>
+                            <th>Cantidad de usuarios</th>
+                            <th>Cantidad de modulos</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for(plan of listaPlanes; track plan.id){
+                            <td>{{plan.tipo}}</td>
+                            <td>{{plan.precio}}</td>
+                            <td>{{plan.numUsuarios}}</td>
+                            <td>{{plan.numModulos}}</td>
+                            <td><button class="btn" (click)="toggleForm()" >Me interesa</button></td>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <p>Interesado? Simplemente seleccione el plan que desea solicitar y rellene el formulario</p>
+        </section>
+
+        <section id="contact" class="contact-section">
+            <h2>Sobre Nosotros</h2>
+            <h3>KodeHaus</h3>
+            <p>Somos una empresa colombiana de tecnología especializada en el desarrollo de soluciones digitales a la medida. Nuestro propósito es transformar los procesos tradicionales en experiencias eficientes, accesibles y centradas en las personas.
+Con un equipo multidisciplinario de ingenieros, diseñadores y profesionales en innovación, en KodeHaus combinamos tecnología, creatividad y conocimiento del mercado local para crear plataformas que impulsen el crecimiento de los negocios y fortalezcan la gestión pública.
+Desde Colombia, desarrollamos herramientas como nuestro sistema SaaS para plazas de mercado Papaya, una solución pensada para modernizar la administración, mejorar la conexión entre comerciantes y clientes, y promover la economía local mediante la digitalización.
+<br><br> En KodeHaus, creemos que la tecnología debe ser un puente entre las comunidades y el progreso. Nuestro compromiso es claro: crear software con propósito, hecho en Colombia y para Colombia.</p>
+
+            <div class="sendMail">
+                <form (ngSubmit)="sendInfoAlert()" class="contact-form">
+                    <input
+                        class="email-input"
+                        name="correo"
+                        [(ngModel)]="contactMail"
+                        placeholder="Deseo obtener más información por correo"
+                    />
+                    <button type="submit" class="btn">Contáctenos</button>
                 </form>
             </div>
-            }
+        </section>
 
-        @if(showRegister){
-            <div
-                class="modal"
-                role="dialog"
-                aria-modal="true"
-                aria-label="Registrar Plaza (ejemplo)">
+        <section id="footer">
+            <p>KodeHaus 2025 <span>&copy;</span></p>
+        </section>
+    </div>
+    </div>
+    
+</body>
 
-                <form (ngSubmit)="crearCuenta()">
-                <h3 style="margin-top: 0">Crear Nueva Cuenta</h3>
-
-                <div
-                    style="
-                    display: flex;
-                    gap: 8px;
-                    justify-content: flex-end;
-                    margin-top: 12px;
-                    ">
-                    <button class="btn" style="background: #e0e0e0; color: #333" (click)="toggleRegisterForm()">Cancelar</button>
-                    <button class="btn">Crear Cuenta</button>
-                </div>
-                </form>
-            </div>
-            } 
-    </body>
-</div>

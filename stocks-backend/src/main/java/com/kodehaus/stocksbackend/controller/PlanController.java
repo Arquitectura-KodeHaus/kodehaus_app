@@ -35,6 +35,12 @@ public class PlanController {
         return new ResponseEntity<>(newPlaza, HttpStatus.CREATED); 
     }
 
+    @GetMapping("/find/{id}")
+    public ResponseEntity<PlanDTO> findById(Long id) {
+        PlanDTO plazas = planService.findById(id);
+        return ResponseEntity.ok(plazas);
+    }
+
     @GetMapping
     public ResponseEntity<List<PlanDTO>> findAll() {
         List<PlanDTO> plazas = planService.findAll();

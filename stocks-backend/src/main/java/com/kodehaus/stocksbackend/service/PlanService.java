@@ -7,6 +7,7 @@ import com.kodehaus.stocksbackend.dto.PlanDTO;
 
 public interface PlanService {
     List<PlanDTO> findAll();
+    PlanDTO findById(Long id);
     PlanDTO create(CreatePlanReq plazaReq);
     PlanDTO update(Long id, CreatePlanReq plazaUpdateReq);
     void delete(Long id);

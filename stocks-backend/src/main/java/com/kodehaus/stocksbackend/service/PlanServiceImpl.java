@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.kodehaus.stocksbackend.dto.CreatePlanReq;
 import com.kodehaus.stocksbackend.dto.PlanDTO;
 import com.kodehaus.stocksbackend.model.Plan;
+import com.kodehaus.stocksbackend.model.Plaza;
 import com.kodehaus.stocksbackend.repository.PlanRepository;
 import com.kodehaus.stocksbackend.utils.PlanMapper;
 
@@ -27,6 +28,13 @@ public class PlanServiceImpl implements PlanService{
         return planRepository.findAll().stream()
         .map(planMapper::toDto)
         .collect(Collectors.toList());
+    }
+
+    @Override
+    public PlanDTO findById(Long id) {
+        Plan plan = planRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Plan no encontrada con ID: " + id));
+        return planMapper.toDto(plan);
     }
 
     @Override
