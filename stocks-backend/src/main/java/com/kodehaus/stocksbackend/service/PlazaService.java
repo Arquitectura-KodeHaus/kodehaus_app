@@ -3,6 +3,7 @@ package com.kodehaus.stocksbackend.service;
 import java.util.List;
 
 import com.kodehaus.stocksbackend.dto.CreatePlazaReq;
+import com.kodehaus.stocksbackend.dto.ModuloDTO;
 import com.kodehaus.stocksbackend.dto.PlazaDTO;
 import com.kodehaus.stocksbackend.dto.UpdatePlazaReq;
 
@@ -12,4 +13,5 @@ public interface PlazaService {
     PlazaDTO create(CreatePlazaReq plazaReq);
     PlazaDTO update(Long id, UpdatePlazaReq plazaUpdateReq);
     void delete(Long id);
+    List<ModuloDTO> getModulos(Long id);
 }

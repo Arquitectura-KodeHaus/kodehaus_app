@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.kodehaus.stocksbackend.dto.CreatePlazaReq;
+import com.kodehaus.stocksbackend.dto.ModuloDTO;
 import com.kodehaus.stocksbackend.dto.PlazaDTO;
 import com.kodehaus.stocksbackend.dto.UpdatePlazaReq;
 import com.kodehaus.stocksbackend.model.Plan;
@@ -19,7 +20,9 @@ import com.kodehaus.stocksbackend.repository.PlanRepository;
 import com.kodehaus.stocksbackend.repository.PlazaRepository;
 import com.kodehaus.stocksbackend.repository.SuscripcionRepository;
 import com.kodehaus.stocksbackend.repository.UbicacionRepository;
+import com.kodehaus.stocksbackend.utils.ModuloMapper;
 import com.kodehaus.stocksbackend.utils.PlazaMapper;
+import com.kodehaus.stocksbackend.model.Modulo;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -36,6 +39,8 @@ public class PlazaServiceImpl implements PlazaService {
     private UbicacionRepository ubicacionRepository;
     @Autowired
     private PlazaMapper plazaMapper;
+    @Autowired
+    private ModuloMapper moduloMapper;
 
     @Override
     public List<PlazaDTO> findAll() {
@@ -149,5 +154,12 @@ public class PlazaServiceImpl implements PlazaService {
         if (ubicacionToDelete != null) {
             ubicacionRepository.delete(ubicacionToDelete);
         }
-    }    
+    }
+    
+    @Override
+    public List<ModuloDTO> getModulos(Long id) {
+        return plazaRepository.getModulos(id).stream()
+            .map(moduloMapper::toDto)
+            .collect(Collectors.toList());
+    }
 }
