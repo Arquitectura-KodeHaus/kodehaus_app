@@ -341,3 +341,10 @@ body,html{
   font-weight:600
 }
 
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* space between button and text */
+  text-align: right;
+  margin-right: 12px;
+}

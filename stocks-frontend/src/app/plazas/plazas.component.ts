@@ -7,6 +7,7 @@ import { CreatePlaza } from '../entity/CreatePlaza';
 import { Plan } from '../models/plan';
 import { FormsModule } from '@angular/forms';
 import { Modulo } from '../models/modulo';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -43,7 +44,8 @@ export class PlazasComponent implements OnInit {
 
   constructor(
     private PlazasService: PlazasService,
-    private PlanService: PlanService
+    private PlanService: PlanService, 
+    private router: Router
   ) {}
 
   planes: Plan[] = [];
@@ -223,5 +225,10 @@ export class PlazasComponent implements OnInit {
         window.location.reload();
       }
     });
+  }
+
+  logout(): void{
+    localStorage.removeItem('token');
+    this.router.navigate(['/']);
   }
 }

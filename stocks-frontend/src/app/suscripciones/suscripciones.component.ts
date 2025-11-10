@@ -6,6 +6,7 @@ import { ModuloService } from '../services/modulo.service';
 import { Suscripcion } from '../models/Suscripcion';
 import { Modulo } from '../models/modulo';
 import { AddModulosRequest } from '../models/AddModulosRequest';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-suscripciones',
@@ -26,7 +27,8 @@ export class SuscripcionesComponent implements OnInit {
 
   constructor(
     private suscripcionService: SuscripcionService,
-    private moduloService: ModuloService
+    private moduloService: ModuloService, 
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -244,5 +246,10 @@ export class SuscripcionesComponent implements OnInit {
 
   formatDate(dateString: string): string {
     return new Date(dateString).toLocaleDateString('es-ES');
+  }
+
+  logout(): void{
+    localStorage.removeItem('token');
+    this.router.navigate(['/']);
   }
 }

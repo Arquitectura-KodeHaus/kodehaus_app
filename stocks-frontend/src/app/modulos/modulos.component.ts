@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Modulo } from '../models/modulo';
 import { ModuloService } from '../services/modulo.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-modulos',
@@ -28,7 +29,7 @@ export class ModulosComponent {
 
   estadosDisponibles: Modulo['estado'][] = ['Activo', 'En desarrollo', 'Inactivo'];
 
-  constructor(private moduloService: ModuloService) {
+  constructor(private moduloService: ModuloService, private router: Router) {
   }
 
   ngOnInit(): void {
@@ -128,5 +129,10 @@ export class ModulosComponent {
   private getNextId(): number {
     const maxId = this.modulos.reduce((max, m) => (m.id > max ? m.id : max), 0);
     return maxId + 1;
+  }
+
+  logout(): void{
+    localStorage.removeItem('token');
+    this.router.navigate(['/']);
   }
 }

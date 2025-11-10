@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PlanService } from '../services/plan.service';
 import { Plan } from '../models/plan';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-planes',
@@ -27,7 +28,7 @@ export class PlanesComponent implements OnInit {
     precio: 0
   };
 
-  constructor(private planService: PlanService) {}
+  constructor(private planService: PlanService, private router: Router) {}
 
   ngOnInit() {
     this.loadPlanes();
@@ -157,5 +158,10 @@ export class PlanesComponent implements OnInit {
 
   getTotalModules(): number {
     return this.planes.reduce((sum, plan) => sum + plan.numModulos, 0);
+  }
+
+  logout(): void{
+    localStorage.removeItem('token');
+    this.router.navigate(['/']);
   }
 }

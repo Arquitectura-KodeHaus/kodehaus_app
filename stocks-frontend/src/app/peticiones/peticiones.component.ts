@@ -4,6 +4,7 @@ import { PlanService } from '../services/plan.service';
 import { peticion } from '../entity/Peticion';
 import { Plan } from '../models/plan';
 import { forkJoin } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-peticiones',
@@ -14,7 +15,7 @@ import { forkJoin } from 'rxjs';
 })
 export class PeticionesComponent {
 
-  constructor(private peticionService: PeticionService, private planService: PlanService){}
+  constructor(private peticionService: PeticionService, private planService: PlanService, private router: Router){}
 
   listaPeticiones: (peticion & { planTipo?: string })[] = [];
 
@@ -62,5 +63,10 @@ export class PeticionesComponent {
         window.location.reload();
       }
     });
+  }
+
+  logout(): void{
+    localStorage.removeItem('token');
+    this.router.navigate(['/']);
   }
 }

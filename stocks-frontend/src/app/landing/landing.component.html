@@ -9,6 +9,7 @@
             <a href="#papaya">Conozca PlazApp</a>
             <a href="#plans">Nuestros Planes</a>
             <a href="#contact">Sobre Nosotros</a>
+            <button (click)="toggleLoginForm()" class="btn">Iniciar Sesion</button>
         </nav>
     </header>
 
@@ -55,7 +56,40 @@
         <section id="plans" class="plans-section">
             <h2>Nuestros Planes</h2>
             <h3>Nuestros planes garantizan satisfacer cualquier necesidad administrativa que tenga</h3>
-            @if (showForm) {
+            @if (showLogin) {
+                <div class="modal-overlay" (click)="toggleLoginForm()">
+                    <div class="modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+                    <form (ngSubmit)="login()">
+                        <h4 style="margin-top: 0">Iniciar Sesion</h4>
+                        <div class="form-row">
+                        <input
+                            type="email"
+                            class="Email"
+                            name="correo"
+                            required
+                            [(ngModel)]="correo"
+                            placeholder="Correo"
+                        />
+                        <input
+                            type="password"
+                            class="password"
+                            name="password"
+                            required
+                            [(ngModel)]="password"
+                            placeholder="Contraseña"
+                        />
+                        
+                        </div>
+                        <div class="modal-actions">
+                        <button class="btn cancel" (click)="toggleLoginForm()">Cancelar</button>
+                        <button type="submit" class="btn">Iniciar Sesion</button>
+                        </div>
+                    </form>
+                    </div>
+                </div>
+                }
+
+                @if (showForm) {
                 <div class="modal-overlay" (click)="toggleForm(null)">
                     <div class="modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
                     <form (ngSubmit)="sendPetition()">

@@ -14,11 +14,12 @@
 
   <div class="container">
     <header class="header">
-      <div style="margin-right:12px;text-align:right">
-        <div class="small">Admin Entidad de Gobierno</div>
-      </div>
-      <div class="avatar" title="Admin"></div>
-    </header>
+    <div class="user-info">
+      <button class="btn" (click)="logout()">Cerrar Sesión</button>
+      <div class="small">Admin Entidad de Gobierno</div>
+    </div>
+    <div class="avatar" title="Admin"></div>
+  </header>
     <main class="content">
 <h2 style='margin-top:6px;margin-bottom:18px'>Gestión de Módulos</h2>
   <div class="toolbar"><div class="small">Admin / Módulos</div><button class="btn" (click)="abrirModalNuevo()">+ Nuevo Módulo</button></div>
