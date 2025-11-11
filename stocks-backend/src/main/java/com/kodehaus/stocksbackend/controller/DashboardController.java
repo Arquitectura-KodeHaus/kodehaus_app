@@ -3,7 +3,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.kodehaus.stocksbackend.dto.ModuloDTO;
-import com.kodehaus.stocksbackend.model.Modulo;
 import com.kodehaus.stocksbackend.service.ModuloService;
 
 import org.springframework.jdbc.core.JdbcTemplate;
