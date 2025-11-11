@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import com.kodehaus.stocksbackend.dto.CreatePlanReq;
 import com.kodehaus.stocksbackend.dto.PlanDTO;
 import com.kodehaus.stocksbackend.model.Plan;
-import com.kodehaus.stocksbackend.model.Plaza;
 import com.kodehaus.stocksbackend.repository.PlanRepository;
 import com.kodehaus.stocksbackend.utils.PlanMapper;
 

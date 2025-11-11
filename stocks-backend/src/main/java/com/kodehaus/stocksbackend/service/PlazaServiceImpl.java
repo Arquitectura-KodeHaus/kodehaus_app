@@ -22,7 +22,6 @@ import com.kodehaus.stocksbackend.repository.SuscripcionRepository;
 import com.kodehaus.stocksbackend.repository.UbicacionRepository;
 import com.kodehaus.stocksbackend.utils.ModuloMapper;
 import com.kodehaus.stocksbackend.utils.PlazaMapper;
-import com.kodehaus.stocksbackend.model.Modulo;
 
 import jakarta.persistence.EntityNotFoundException;
 

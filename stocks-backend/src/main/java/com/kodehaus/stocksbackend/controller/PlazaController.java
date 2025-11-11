@@ -3,6 +3,7 @@ package com.kodehaus.stocksbackend.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import com.kodehaus.stocksbackend.dto.CreatePlazaReq;
 import com.kodehaus.stocksbackend.dto.ModuloDTO;
@@ -29,6 +31,15 @@ import jakarta.persistence.EntityNotFoundException;
 public class PlazaController {
     @Autowired
     private PlazaService plazaService;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    private final String gestionPlazasUrl;
+
+    public PlazaController(@Value("${gestion.plazas.url}") String gestionPlazasUrl){
+        this.gestionPlazasUrl = gestionPlazasUrl;
+    }
 
     @GetMapping("/find/activas")
     public ResponseEntity<List<PlazaDTO>> findAll() {
@@ -48,7 +59,12 @@ public class PlazaController {
 
     @PostMapping
     public ResponseEntity<PlazaDTO> create(@RequestBody CreatePlazaReq plazaReq) {
+        System.out.println("Url:" + gestionPlazasUrl);
+
         PlazaDTO newPlaza = plazaService.create(plazaReq);
+
+        restTemplate.postForObject(gestionPlazasUrl + "/api/plazas", newPlaza, Void.class);
+
         return new ResponseEntity<>(newPlaza, HttpStatus.CREATED); 
     }
 

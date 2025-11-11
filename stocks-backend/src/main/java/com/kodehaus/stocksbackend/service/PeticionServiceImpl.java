@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import com.kodehaus.stocksbackend.dto.CreatePeticionReq;
 import com.kodehaus.stocksbackend.dto.PeticionDTO;
 import com.kodehaus.stocksbackend.model.Peticion;
-import com.kodehaus.stocksbackend.model.Plan;
 import com.kodehaus.stocksbackend.repository.PeticionRepository;
 import com.kodehaus.stocksbackend.utils.PeticionMapper;
 
