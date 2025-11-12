@@ -79,7 +79,6 @@ public class PlazaController {
         body.put("email", newPlaza.contacto());
         body.put("opening_hours", "7am");
         body.put("closing_hours", "8pm");
-        body.put("is_active",true);
 
         System.out.println("Informacion enviada: " + body);
         restTemplate.postForObject(gestionPlazasUrl + "/api/plazas", newPlaza, Void.class);

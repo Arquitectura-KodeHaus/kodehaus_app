@@ -61,13 +61,13 @@ public class CuentaGerenteController {
 
         Map<String, Object> body = new HashMap<>();
         body.put("username", nameParts[0] + 123);
-        body.put("firstName", nameParts[0]);
-        body.put("lastName", nameParts[nameParts.length - 1]);
         body.put("email", newCuenta.correo());
         body.put("password", newCuenta.password());
+        body.put("firstName", nameParts[0]);
+        body.put("lastName", nameParts[nameParts.length - 1]);
         body.put("phoneNumber", "+1-555-0005");
-        body.put("nombre", newCuenta.nombre());
         body.put("plazaId",newCuenta.plaza_id());
+        body.put("roles", List.of("MANAGER"));
 
         System.out.println("Informacion enviada: " + body);
         restTemplate.postForObject(gestionPlazasUrl + "/api/managers/register", body, Void.class);
