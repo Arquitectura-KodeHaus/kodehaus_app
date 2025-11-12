@@ -44,6 +44,7 @@
             <th>Fecha adquisición</th>
             <th>Módulos</th>
             <th>Dominio</th>
+            <th>Gerente</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -56,9 +57,26 @@
               <td>{{plaza.fechaCreacion	}}</td>
               <td>{{plaza.plan}}</td>
               <td>{{plaza.dominio}}</td>
+              <td>
+                @if(plaza.gerente_id == 0 || plaza.gerente_id == null){
+                  <span style="color: red;">No hay gerente registrado</span>
+                }
+                @else{
+                  @for(gerente of listaGerentes; track gerente.id){
+                    @if(gerente.id === plaza.gerente_id){
+                      {{gerente.nombre}} ({{gerente.correo}})
+                    }
+                  }
+                }</td>
               <td class="actions">
                 <button (click)="showPlazaInfo(plaza.id)">🔎</button>
                 <button (click)="toggleModifyForm(plaza.id)">✏️</button>
+                @if(plaza.gerente_id == 0 || plaza.gerente_id == null){
+                  <button (click)="toggleGerenteForm(plaza.id)">👤</button>
+                }
+                @else {
+                  <button (click)="showGerenteInfo(plaza.id)">👤</button>
+                }
                 <button (click)="toggleDelete(plaza.id, plaza.nombre)">🗑️</button>
               </td>
             </tr>
@@ -75,6 +93,7 @@
 
         <form (ngSubmit)="crearPlaza()">
           <h3 style="margin-top: 0">Registrar Nueva Plaza</h3>
+          <p>Recuerde que una vez registrada la plaza deberá crear una cuenta para el gerente</p>
           <div class="form-row">
             <label>Nombre</label>
             <input class="input" name="nombre" [(ngModel)]="nuevaPlaza.nombre" placeholder="Nombre de la plaza" />
@@ -113,6 +132,45 @@
               margin-top: 12px;
             ">
             <button class="btn" style="background: #e0e0e0; color: #333" (click)="toggleRegisterForm()">Cancelar</button>
+            <button type="submit" class="btn">Crear</button>
+          </div>
+        </form>
+      </div>
+      }
+
+      @if(showGerenteForm){
+      <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Registrar Plaza (ejemplo)">
+
+        <form (ngSubmit)="crearGerente()">
+          <h3 style="margin-top: 0">Gerente De La Plaza</h3>
+          <div class="form-row">
+            <label>Nombre</label>
+            <input class="input" name="nombre" [(ngModel)]="nuevoGerente.nombre" placeholder="Nombre completo del gerente" />
+          </div>
+          <div class="form-row">
+            <label>Cedula</label
+            ><input class="input" name="cedula" type="number" [(ngModel)]="nuevoGerente.cedula" placeholder="Cedula" />
+          </div>
+          <div class="form-row">
+            <label>Correo</label
+            ><input class="input" name="correo" type="email" [(ngModel)]="nuevoGerente.correo" placeholder="Correo" />
+          </div>
+          <div class="form-row">
+            <label>Contraseña</label
+            ><input class="input" name="password" type="password" [(ngModel)]="nuevoGerente.password" placeholder="Contraseña" />
+          </div>
+          <div
+            style="
+              display: flex;
+              gap: 8px;
+              justify-content: flex-end;
+              margin-top: 12px;
+            ">
+            <button class="btn" style="background: #e0e0e0; color: #333" (click)="toggleGerenteForm(null)">Cancelar</button>
             <button type="submit" class="btn">Crear</button>
           </div>
         </form>
@@ -237,6 +295,37 @@
               margin-top: 12px;
             ">
             <button class="btn" style="background: #e0e0e0; color: #333" (click)="showPlazaInfo(null)">Cerrar</button>
+          </div>
+        </div>
+      }
+
+      @if(showGerentePanel){
+      <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Registrar Plaza (ejemplo)">
+        <h3 style="margin-top: 0">Informacion del Gerente</h3>
+        <div>
+          <h4>Nombre</h4>
+          <p>{{gerenteInfo.nombre}}</p>
+        </div>
+        <div>
+          <h4>Cedula</h4>
+          <p>{{gerenteInfo.cedula}}</p>
+        </div>
+        <div>
+          <h4>Correo</h4>
+          <p>{{gerenteInfo.correo}}</p>
+        </div>
+        <div
+            style="
+              display: flex;
+              gap: 8px;
+              justify-content: flex-end;
+              margin-top: 12px;
+            ">
+            <button class="btn" style="background: #e0e0e0; color: #333" (click)="toggleGerenteInfo(null)">Cerrar</button>
           </div>
         </div>
       }

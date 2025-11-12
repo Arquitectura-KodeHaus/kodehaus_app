@@ -1,6 +1,8 @@
 package com.kodehaus.stocksbackend.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,9 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.kodehaus.stocksbackend.dto.CreatePlazaReq;
+import com.kodehaus.stocksbackend.dto.CuentaGerenteDTO;
 import com.kodehaus.stocksbackend.dto.ModuloDTO;
 import com.kodehaus.stocksbackend.dto.PlazaDTO;
 import com.kodehaus.stocksbackend.dto.UpdatePlazaReq;
+import com.kodehaus.stocksbackend.service.CuentaGerenteService;
 import com.kodehaus.stocksbackend.service.PlazaService;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -31,6 +35,9 @@ import jakarta.persistence.EntityNotFoundException;
 public class PlazaController {
     @Autowired
     private PlazaService plazaService;
+
+    @Autowired
+    private CuentaGerenteService cuentaService;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -63,6 +70,17 @@ public class PlazaController {
 
         PlazaDTO newPlaza = plazaService.create(plazaReq);
 
+        //Json enviado al otro servicio
+        Map<String, Object> body = new HashMap<>();
+        body.put("name", newPlaza.nombre());
+        body.put("description", "Plaza de mercado");
+        body.put("address", newPlaza.direccion());
+        body.put("phone_number", "+1-555-0005");
+        body.put("email", newPlaza.contacto());
+        body.put("opening_hours", "7am");
+        body.put("closing_hours", "8pm");
+
+        System.out.println("Informacion enviada: " + body);
         restTemplate.postForObject(gestionPlazasUrl + "/api/plazas", newPlaza, Void.class);
 
         return new ResponseEntity<>(newPlaza, HttpStatus.CREATED); 
@@ -82,6 +100,13 @@ public class PlazaController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         try {
+            // Eliminar gerente
+            CuentaGerenteDTO cuenta = cuentaService.findByPlazaId(id);
+            if(cuenta != null){
+                cuentaService.delete(cuenta.id());
+            }
+        
+            //Eliminar plaza
             plazaService.delete(id);
             // HTTP 204 No Content, la respuesta estándar para una eliminación exitosa sin cuerpo.
             return ResponseEntity.noContent().build();

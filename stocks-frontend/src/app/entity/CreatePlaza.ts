@@ -7,5 +7,6 @@ export interface CreatePlaza {
     ciudad: string,
     direccion: string,
     planId: number,
-    fechaCreacion: Date | null
+    fechaCreacion: Date | null,
+    gerente_id: number
 }

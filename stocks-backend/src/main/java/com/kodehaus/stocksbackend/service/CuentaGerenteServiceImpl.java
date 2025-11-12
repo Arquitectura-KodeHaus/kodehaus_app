@@ -36,6 +36,17 @@ public class CuentaGerenteServiceImpl implements CuentaGerenteService {
             .orElseThrow(()-> new EntityNotFoundException("Cuenta no encontrada con ID: " + id));
         return cuentaMapper.toDto(cuenta);
     }
+    
+    @Override
+    public CuentaGerenteDTO findByPlazaId(Long id){
+        CuentaGerente cuenta = cuentaRepository.findByPlazaId(id);
+
+        if (cuenta == null) {
+            return null;
+        }
+
+        return cuentaMapper.toDto(cuenta);
+    }
 
     @Override
     @Transactional
@@ -49,5 +60,14 @@ public class CuentaGerenteServiceImpl implements CuentaGerenteService {
 
         CuentaGerente saved = cuentaRepository.save(cuenta);
         return cuentaMapper.toDto(saved);
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long id){
+        CuentaGerente gerente = cuentaRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Gerente no encontrado para eliminar con ID: " + id));
+
+        cuentaRepository.delete(gerente);
     }
 }

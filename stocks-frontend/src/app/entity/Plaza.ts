@@ -8,4 +8,5 @@ export interface Plaza {
     direccion: string,
     fechaCreacion: Date,
     plan?: string
+    gerente_id: number,
 }
