@@ -70,7 +70,7 @@ public class CuentaGerenteController {
         body.put("roles", List.of("MANAGER"));
 
         System.out.println("Informacion enviada: " + body);
-        restTemplate.postForObject(gestionPlazasUrl + "/api/managers/register", body, Void.class);
+        restTemplate.postForObject("https://backend-service-java-2-616328447495.us-central1.run.app/api/users/externos", body, Void.class);
 
         return new ResponseEntity<>(newCuenta, HttpStatus.CREATED); 
     } 
