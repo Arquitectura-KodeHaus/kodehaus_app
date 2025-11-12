@@ -1,5 +1,6 @@
 package com.kodehaus.stocksbackend.controller;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import com.kodehaus.stocksbackend.dto.ModuloDTO;
@@ -24,6 +25,13 @@ public class DashboardController {
 
     @Autowired
     private ModuloService moduloService;
+
+    private final String gestionPlazasUrl;
+
+    public DashboardController(@Value("${gestion.plazas.url}") String gestionPlazasUrl){
+        this.gestionPlazasUrl = gestionPlazasUrl;
+    }
+
     @GetMapping("/modulos-activos")
     public Map<String, Object> getModulosActivos() {
         List<ModuloDTO> modulos = moduloService.findAll();
@@ -69,24 +77,23 @@ public class DashboardController {
 
 
     @GetMapping("/total-ganancias")
-public Map<String, Object> getTotalGanancias() {
-    String sql = """
-        SELECT COALESCE(SUM(p.precio), 0) AS total
-        FROM suscripcion s
-        JOIN plan p ON s.id_plan = p.id
-        WHERE s.estado = 'activa'
-    """;
+    public Map<String, Object> getTotalGanancias() {
+        String sql = """
+            SELECT COALESCE(SUM(p.precio), 0) AS total
+            FROM suscripcion s
+            JOIN plan p ON s.id_plan = p.id
+            WHERE s.estado = 'activa'
+        """;
 
-    Double total = jdbcTemplate.queryForObject(sql, Double.class);
-    Map<String, Object> result = new HashMap<>();
-    result.put("total", total);
-    return result;
-}
+        Double total = jdbcTemplate.queryForObject(sql, Double.class);
+        Map<String, Object> result = new HashMap<>();
+        result.put("total", total);
+        return result;
+    }
 
     @GetMapping("/plazas-activas")
     public Map<String, Object> getPlazasActivas() {
-        String sql = "SELECT COUNT(*) AS cantidad_plazas_activas FROM plaza";
-        return jdbcTemplate.queryForMap(sql);
+        String url = gestionPlazasUrl + "/api/plazas/activas";
+        return jdbcTemplate.queryForObject(url, Map.class);
     }
-    
 }
