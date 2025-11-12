@@ -1,6 +1,8 @@
 package com.kodehaus.stocksbackend.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +24,6 @@ import com.kodehaus.stocksbackend.dto.CuentaGerenteDTO;
 import com.kodehaus.stocksbackend.dto.ModuloDTO;
 import com.kodehaus.stocksbackend.dto.PlazaDTO;
 import com.kodehaus.stocksbackend.dto.UpdatePlazaReq;
-import com.kodehaus.stocksbackend.model.CuentaGerente;
 import com.kodehaus.stocksbackend.service.CuentaGerenteService;
 import com.kodehaus.stocksbackend.service.PlazaService;
 
@@ -69,6 +70,18 @@ public class PlazaController {
 
         PlazaDTO newPlaza = plazaService.create(plazaReq);
 
+        //Json enviado al otro servicio
+        Map<String, Object> body = new HashMap<>();
+        body.put("name", newPlaza.nombre());
+        body.put("description", "Plaza de mercado");
+        body.put("address", newPlaza.direccion());
+        body.put("phone_number", "+1-555-0005");
+        body.put("email", newPlaza.contacto());
+        body.put("opening_hours", "7am");
+        body.put("closing_hours", "8pm");
+        body.put("is_active",true);
+
+        System.out.println("Informacion enviada: " + body);
         restTemplate.postForObject(gestionPlazasUrl + "/api/plazas", newPlaza, Void.class);
 
         return new ResponseEntity<>(newPlaza, HttpStatus.CREATED); 

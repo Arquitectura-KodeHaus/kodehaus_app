@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.kodehaus.stocksbackend.dto.CuentaGerenteDTO;
 import com.kodehaus.stocksbackend.dto.CuentaGerenteRequest;
 import com.kodehaus.stocksbackend.model.CuentaGerente;
-import com.kodehaus.stocksbackend.model.Plan;
 import com.kodehaus.stocksbackend.repository.CuentaGerenteRepository;
 import com.kodehaus.stocksbackend.utils.CuentaGerenteMapper;
 
