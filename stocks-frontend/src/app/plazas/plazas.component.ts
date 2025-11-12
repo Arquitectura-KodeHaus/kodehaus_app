@@ -2,11 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PlazasService } from '../services/plazas.service';
 import { PlanService } from '../services/plan.service';
+import { cuentaGerenteService } from '../services/cuentaGerente.service';
 import { Plaza } from '../entity/Plaza';
 import { CreatePlaza } from '../entity/CreatePlaza';
 import { Plan } from '../models/plan';
 import { FormsModule } from '@angular/forms';
 import { Modulo } from '../models/modulo';
+import { cuentaGerente } from '../models/cuentaGerente';
+import { catchError, forkJoin, map, switchMap } from 'rxjs';
 
 
 @Component({
@@ -26,7 +29,8 @@ export class PlazasComponent implements OnInit {
     ciudad: '',
     direccion: '',
     planId: 0,
-    fechaCreacion: null
+    fechaCreacion: null,
+    gerente_id: 0
   } 
 
   plazaInfo: Plaza = {
@@ -38,12 +42,41 @@ export class PlazasComponent implements OnInit {
     ciudad: '',
     direccion: '',
     fechaCreacion: new Date(),
-    plan: ''
+    plan: '',
+    gerente_id: 0
+  }
+
+  gerenteInfo: cuentaGerente = {
+    id: 0,
+    nombre: '',
+    cedula: 0,
+    correo: '',
+    plaza_id: 0,
+    password: ''
+  }
+
+  gerentePlaza: cuentaGerente = {
+    id: 0,
+    nombre: '',
+    cedula: 0,
+    correo: '',
+    plaza_id: 0,
+    password: ''
+  }
+
+  nuevoGerente: cuentaGerente = {
+    id: 0,
+    nombre: '',
+    cedula: 0,
+    correo: '',
+    plaza_id: 0,
+    password: ''
   }
 
   constructor(
     private PlazasService: PlazasService,
-    private PlanService: PlanService
+    private PlanService: PlanService,
+    private CuentaGerenteService: cuentaGerenteService
   ) {}
 
   planes: Plan[] = [];
@@ -53,45 +86,89 @@ export class PlazasComponent implements OnInit {
   showDeleteConfirm = false;
   showInfoPanel = false;
   showMofidyForm = false;
+  showGerenteForm = false;
+  showGerentePanel = false;
 
   DeleteId: bigint;
   DeleteName = '';
   modfiyId: bigint;
+  plazaGerenteId: 0;
 
   listaPlazas: Plaza[];
+
+  listaGerentes: cuentaGerente[];
 
   modulosPlaza: Modulo[] = [];
 
   ngOnInit(){
-    // Load plazas
-    this.PlazasService.getPlazasActivas().subscribe({
-      next: (data) => {
-        this.listaPlazas = data;
-        console.log("Plazas cargadas", this.listaPlazas)
+    // Load plazas and gerentes
+    this.PlazasService.getPlazasActivas().pipe(
+      switchMap((plazas) => {
+        this.listaPlazas = plazas;
+        console.log("Plazas cargadas:", plazas);
+
+        const gerenteRequests = plazas.map(plaza =>
+          this.CuentaGerenteService.getGerentePlaza(plaza.id).pipe(
+            map(gerente => ({
+              plazaId: plaza.id,
+              gerente
+            })),
+            // If a plaza has no gerente, handle it gracefully
+            catchError(() => [{
+              plazaId: plaza.id,
+              gerente: null
+            }])
+          )
+        );
+
+        return forkJoin(gerenteRequests);
+      })
+    ).subscribe({
+      next: (results) => {
+        // Save all gerentes in a separate list
+        this.listaGerentes = results.map(r => r.gerente).filter(g => g != null);
+
+        // Attach gerente_id to each plaza
+        this.listaPlazas = this.listaPlazas.map(plaza => {
+          const match = results.find(r => r.plazaId === plaza.id);
+          return {
+            ...plaza,
+            gerente_id: match?.gerente?.id ?? null
+          };
+        });
+
+        console.log("Plazas con gerente_id:", this.listaPlazas);
+        console.log("Lista de gerentes:", this.listaGerentes);
       },
       error: (err) => {
-        console.error('Error al obtener las plazas:', err);
-        alert('Error al cargar las plazas: ' + (err.error?.message || err.message));
+        console.error('Error al cargar datos:', err);
+        alert('Error al cargar los datos: ' + (err.error?.message || err.message));
       }
     });
 
-    // Load plans
     this.PlanService.getPlanes().subscribe({
       next: (data) => {
         this.planes = data;
         console.log("Planes cargados", this.planes);
         console.log("Número de planes:", this.planes.length);
-        console.log("Primer plan:", this.planes[0]);
-      },
-      error: (err) => {
-        console.error('Error al obtener los planes:', err);
-        alert('Error al cargar los planes: ' + (err.error?.message || err.message));
-      }
+        }
     });
   }
 
   toggleRegisterForm(): void{
     this.showRegisterForm = !this.showRegisterForm;
+  }
+
+  toggleGerenteForm(id): void{
+    this.showGerenteForm = !this.showGerenteForm;
+    this.plazaGerenteId = id;
+  }
+
+  toggleGerenteInfo(id): void{
+    this.showGerentePanel = !this.showGerentePanel;
+    this.plazaGerenteId = id;
+
+    console.log
   }
 
   toggleModifyForm(id): void{
@@ -111,7 +188,8 @@ export class PlazasComponent implements OnInit {
             ciudad: data.ciudad,
             direccion: data.direccion,
             planId: 0, // We'll need to get this from somewhere or handle it differently
-            fechaCreacion: data.fechaCreacion
+            fechaCreacion: data.fechaCreacion,
+            gerente_id: 0
           }
           console.log("Informacion de plaza: ", this.nuevaPlaza)
         }
@@ -128,7 +206,8 @@ export class PlazasComponent implements OnInit {
         ciudad: '',
         direccion: '',
         planId: 0,
-        fechaCreacion: null
+        fechaCreacion: null,
+        gerente_id: 0
       }
     }
   }
@@ -152,6 +231,18 @@ export class PlazasComponent implements OnInit {
         console.log("Informacion de plaza: ", this.plazaInfo)
       }
     })
+  }
+
+  showGerenteInfo(id): void{
+    this.toggleGerenteInfo(id);
+
+    const plaza = this.listaPlazas.find(p => p.id === id);
+    if (!plaza?.gerente_id) {
+      return;
+    }
+    
+    this.gerenteInfo = this.listaGerentes.find(g => g.id === plaza.gerente_id);
+    console.log("Mostrando información del gerente:", this.gerenteInfo);
   }
 
   crearPlaza(): void {
@@ -190,7 +281,8 @@ export class PlazasComponent implements OnInit {
       ciudad: this.nuevaPlaza.ciudad,
       direccion: this.nuevaPlaza.direccion,
       planId: this.nuevaPlaza.planId,
-      fechaCreacion: this.nuevaPlaza.fechaCreacion
+      fechaCreacion: this.nuevaPlaza.fechaCreacion,
+      gerente_id: 0
     };
 
     this.PlazasService.updatePlaza(this.modfiyId, updateData).subscribe({
@@ -223,5 +315,23 @@ export class PlazasComponent implements OnInit {
         window.location.reload();
       }
     });
+  }
+
+  crearGerente(): void{
+    this.nuevoGerente.plaza_id = this.plazaGerenteId;
+    this.CuentaGerenteService.crearGerente(this.nuevoGerente).subscribe({
+      next: response => {
+        console.log('Gerente creado:', response);
+        alert("El gerente " + this.nuevoGerente.nombre + " ha sido creado para la plaza");
+        window.location.reload();
+      },
+      error: err => {
+        console.error('Error al crear el gerente:', err);
+        alert("Ocurrió un error al crear el gerente, por favor intente más tarde");
+        window.location.reload();
+      }
+    });
+
+    this.toggleGerenteForm(null);
   }
 }

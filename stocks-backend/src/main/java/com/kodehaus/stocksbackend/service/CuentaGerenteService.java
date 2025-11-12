@@ -9,4 +9,6 @@ public interface CuentaGerenteService {
     List<CuentaGerenteDTO>findAll();
     CuentaGerenteDTO findById(Long id);
     CuentaGerenteDTO create(CuentaGerenteRequest datos);
+    CuentaGerenteDTO findByPlazaId(Long id);
+    void delete(Long id);
 }

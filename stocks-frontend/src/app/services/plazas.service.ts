@@ -4,6 +4,7 @@ import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 import { Plaza } from '../entity/Plaza';
 import { CreatePlaza } from '../entity/CreatePlaza';
+import { cuentaGerente } from '../models/cuentaGerente';
 
 @Injectable({
   providedIn: 'root'

@@ -33,6 +33,12 @@ public class CuentaGerenteController {
         return ResponseEntity.ok(cuenta);
     }
 
+    @GetMapping("/plaza/{id}")
+    public ResponseEntity<CuentaGerenteDTO> findByPlazaId(@PathVariable Long id) {
+        CuentaGerenteDTO cuenta = cuentaService.findByPlazaId(id);
+        return ResponseEntity.ok(cuenta);
+    }
+
     @PostMapping("/create")
     public ResponseEntity<CuentaGerenteDTO> create(@RequestBody CuentaGerenteRequest datos) {
         CuentaGerenteDTO newCuenta = cuentaService.create(datos);
