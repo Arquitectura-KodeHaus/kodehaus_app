@@ -105,3 +105,6 @@ Cada despliegue usa el endpoint `/health` para validar la aplicación antes de e
 - Mantén las credenciales seguras; no las expongas en issues ni commits.
 - Usa el sandbox `test` para experimentar sin afectar producción.
 - Documenta en el PR cualquier configuración adicional que requiera el equipo.
+
+## CI/CD Status
+- **QA Environment**: Configurado y desplegado desde la rama `develop`.
