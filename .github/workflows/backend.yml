@@ -2,7 +2,7 @@ name: Backend CI/CD - GCP
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, develop ] # Agregamos develop para QA
     paths:
       - 'stocks-backend/**'
       - '.github/workflows/backend.yml'
@@ -11,7 +11,6 @@ env:
   PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
   REGION: ${{ vars.GCP_REGION }}
   AR_REPO: ${{ vars.ARTIFACT_REGISTRY_REPO || 'stocks-backend' }}
-  SERVICE: stocks-backend-service
   IMAGE_NAME: stocks-backend
 
 jobs:
@@ -28,6 +27,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # --- CONFIGURACIÓN DINÁMICA DE AMBIENTES ---
+      - name: Set Environment for Branch
+        id: env-config
+        run: |
+          if [[ ${{ github.ref }} == 'refs/heads/main' ]]; then
+            echo "Ambiente: PRODUCCION"
+            echo "SERVICE_NAME=stocks-backend-service" >> $GITHUB_ENV
+            echo "SQL_INSTANCE=kodehaus-prod-474304:us-central1:pg-prod" >> $GITHUB_ENV
+            echo "SPRING_PROFILE=prod" >> $GITHUB_ENV
+            # Secretos de Producción
+            echo "SECRET_URL_NAME=DB_URL" >> $GITHUB_ENV
+            echo "SECRET_PASS_NAME=DB_PASSWORD" >> $GITHUB_ENV
+          else
+            echo "Ambiente: QA"
+            echo "SERVICE_NAME=stocks-backend-service-qa" >> $GITHUB_ENV
+            echo "SQL_INSTANCE=kodehaus-prod-474304:us-central1:pg-pruebas" >> $GITHUB_ENV
+            echo "SPRING_PROFILE=dev" >> $GITHUB_ENV
+            # Secretos de QA
+            echo "SECRET_URL_NAME=DB_URL_QA" >> $GITHUB_ENV
+            echo "SECRET_PASS_NAME=DB_PASSWORD_QA" >> $GITHUB_ENV
+          fi
+
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
@@ -43,7 +64,6 @@ jobs:
       - uses: google-github-actions/setup-gcloud@v2
 
       - name: Configure Docker to Artifact Registry
-        # puede correr desde cualquier carpeta
         run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
         working-directory: .
 
@@ -67,16 +87,17 @@ jobs:
       - name: Deploy to Cloud Run
         working-directory: .
         run: |
-          gcloud run deploy "${{ env.SERVICE }}" \
+          # Usamos las variables dinámicas definidas arriba
+          gcloud run deploy "${{ env.SERVICE_NAME }}" \
           --region "${{ env.REGION }}" \
           --image "${IMAGE_URI_DIGEST}" \
           --platform managed \
           --allow-unauthenticated \
           --service-account "run-backend-sa@${{ env.PROJECT_ID }}.iam.gserviceaccount.com" \
-          --add-cloudsql-instances "kodehaus-prod-474304:us-central1:pg-prod" \
+          --add-cloudsql-instances "${{ env.SQL_INSTANCE }}" \
           --memory 1Gi \
           --cpu 1 \
           --max-instances 10 \
           --timeout 300 \
-          --set-env-vars "SPRING_PROFILES_ACTIVE=prod" \
-          --set-secrets "SPRING_DATASOURCE_URL=DB_URL:latest,SPRING_DATASOURCE_USERNAME=DB_USERNAME:latest,SPRING_DATASOURCE_PASSWORD=DB_PASSWORD:latest"
+          --set-env-vars "SPRING_PROFILES_ACTIVE=${{ env.SPRING_PROFILE }}" \
+          --set-secrets "SPRING_DATASOURCE_URL=${{ env.SECRET_URL_NAME }}:latest,SPRING_DATASOURCE_PASSWORD=${{ env.SECRET_PASS_NAME }}:latest,SPRING_DATASOURCE_USERNAME=DB_USERNAME:latest"
