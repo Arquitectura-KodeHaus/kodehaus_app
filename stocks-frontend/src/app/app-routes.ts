@@ -6,6 +6,7 @@ import { PlazasComponent } from "./plazas/plazas.component";
 import { SuscripcionesComponent } from "./suscripciones/suscripciones.component";
 import { LandingComponent } from './landing/landing.component';
 import { PeticionesComponent } from './peticiones/peticiones.component';
+import { LoginComponent } from './login/login.component';
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },
@@ -14,5 +15,6 @@ export const routes: Routes = [
   { path: 'planes', component: PlanesComponent },
   { path: 'plazas', component: PlazasComponent },
   { path: 'suscripciones', component: SuscripcionesComponent },
-  { path: 'peticiones', component: PeticionesComponent}
+  { path: 'peticiones', component: PeticionesComponent},
+  { path: 'login', component: LoginComponent}
 ];
