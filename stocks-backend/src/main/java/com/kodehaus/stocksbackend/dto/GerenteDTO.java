@@ -12,6 +12,7 @@ public class GerenteDTO {
     private String nombre;
     private String apellido;
     private String email;
+    private String password; // Solo para login, no se debe retornar en otras operaciones
     private String telefono;
     private String identificacion;
     private String estado;

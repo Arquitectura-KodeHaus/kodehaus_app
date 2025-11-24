@@ -14,6 +14,7 @@ public class GerenteMapper {
         dto.setNombre(gerente.getNombre());
         dto.setApellido(gerente.getApellido());
         dto.setEmail(gerente.getEmail());
+        dto.setPassword(gerente.getPassword()); // Incluir password para login
         dto.setTelefono(gerente.getTelefono());
         dto.setIdentificacion(gerente.getIdentificacion());
         dto.setEstado(gerente.getEstado());
