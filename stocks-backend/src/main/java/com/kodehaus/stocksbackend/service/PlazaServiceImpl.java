@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -111,8 +115,20 @@ public class PlazaServiceImpl implements PlazaService {
             );
             
             String externalUrl = "https://backend-service-java-2-616328447495.us-central1.run.app/plazas";
-            restTemplate.postForObject(externalUrl, externalReq, String.class);
-            System.out.println("Plaza creada en servicio externo: " + externalUrl);
+            
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            
+            HttpEntity<ExternalPlazaReq> request = new HttpEntity<>(externalReq, headers);
+            
+            ResponseEntity<String> response = restTemplate.postForEntity(externalUrl, request, String.class);
+            
+            if (response.getStatusCode().is2xxSuccessful()) {
+                System.out.println("Plaza creada en servicio externo: " + externalUrl);
+            } else {
+                System.err.println("Error al crear plaza en servicio externo. Status: " + response.getStatusCode());
+                System.err.println("Response body: " + response.getBody());
+            }
         } catch (Exception e) {
             System.err.println("Error al crear plaza en servicio externo: " + e.getMessage());
             e.printStackTrace();
