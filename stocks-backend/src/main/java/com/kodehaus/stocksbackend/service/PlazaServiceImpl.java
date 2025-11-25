@@ -7,8 +7,10 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.kodehaus.stocksbackend.dto.CreatePlazaReq;
+import com.kodehaus.stocksbackend.dto.ExternalPlazaReq;
 import com.kodehaus.stocksbackend.dto.PlazaDTO;
 import com.kodehaus.stocksbackend.dto.UpdatePlazaReq;
 import com.kodehaus.stocksbackend.model.Plan;
@@ -36,6 +38,8 @@ public class PlazaServiceImpl implements PlazaService {
     private UbicacionRepository ubicacionRepository;
     @Autowired
     private PlazaMapper plazaMapper;
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Override
     public List<PlazaDTO> findAll() {
@@ -86,6 +90,29 @@ public class PlazaServiceImpl implements PlazaService {
         Suscripcion suscripcionSaved = suscripcionRepository.save(suscripcion);
 
         savedPlaza.setSuscripciones(Arrays.asList(suscripcionSaved));
+
+        // Call external service
+        try {
+            ExternalPlazaReq externalReq = new ExternalPlazaReq(
+                String.valueOf(savedPlaza.getId()),
+                savedPlaza.getNombre(),
+                savedPlaza.getContacto(), // Assuming contacto is email
+                savedPlaza.getUbicacion().getDireccion(),
+                savedPlaza.getFechaCreacion().atStartOfDay().toString() + ":00Z", // ISO format approximation
+                "Creada desde Stocks Backend",
+                "true",
+                "0000000000",
+                "08:00",
+                "20:00"
+            );
+            
+            String externalUrl = "https://backend-service-java-2-616328447495.us-central1.run.app/plazas";
+            restTemplate.postForObject(externalUrl, externalReq, String.class);
+            System.out.println("Plaza creada en servicio externo: " + externalUrl);
+        } catch (Exception e) {
+            System.err.println("Error al crear plaza en servicio externo: " + e.getMessage());
+            e.printStackTrace();
+        }
 
         return plazaMapper.toDto(savedPlaza);
     }
