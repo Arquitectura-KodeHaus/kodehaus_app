@@ -101,15 +101,31 @@ public class PlazaServiceImpl implements PlazaService {
 
         // Call external service
         try {
+            String contacto = savedPlaza.getContacto();
+            String email = "plaza@example.com"; // Default fallback
+            String phoneNumber = "0000000000";
+
+            if (contacto != null) {
+                if (contacto.contains("/")) {
+                    String[] parts = contacto.split("/");
+                    email = parts[0].trim();
+                    if (parts.length > 1) {
+                        phoneNumber = parts[1].trim();
+                    }
+                } else {
+                    email = contacto;
+                }
+            }
+
             ExternalPlazaReq externalReq = new ExternalPlazaReq(
                 String.valueOf(savedPlaza.getId()),
                 savedPlaza.getNombre(),
-                savedPlaza.getContacto(), // Assuming contacto is email
+                email,
                 savedPlaza.getUbicacion().getDireccion(),
                 savedPlaza.getFechaCreacion().atStartOfDay().toString() + ":00Z", // ISO format approximation
                 "Creada desde Stocks Backend",
                 "true",
-                "0000000000",
+                phoneNumber,
                 "08:00",
                 "20:00"
             );
