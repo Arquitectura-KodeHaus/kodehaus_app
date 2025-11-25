@@ -82,7 +82,7 @@ public class ModuloController {
     }
 
     // Modulos de una plaza
-    @GetMapping("/modulos/{id}")
+    @GetMapping("/plaza/{id}")
     public ResponseEntity<List<ModuloDTO>> getModulos(@PathVariable Long id) {
         List<ModuloDTO> modulos = plazaService.getModulos(id);
         return ResponseEntity.ok(modulos);
