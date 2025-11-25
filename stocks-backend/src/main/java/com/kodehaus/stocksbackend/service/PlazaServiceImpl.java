@@ -118,7 +118,7 @@ public class PlazaServiceImpl implements PlazaService {
             }
 
             ExternalPlazaReq externalReq = new ExternalPlazaReq(
-                String.valueOf(savedPlaza.getId()),
+                "EXT-" + savedPlaza.getId(),
                 savedPlaza.getNombre(),
                 email,
                 savedPlaza.getUbicacion().getDireccion(),
