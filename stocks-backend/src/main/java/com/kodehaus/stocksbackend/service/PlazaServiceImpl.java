@@ -114,7 +114,7 @@ public class PlazaServiceImpl implements PlazaService {
                 "20:00"
             );
             
-            String externalUrl = "https://backend-service-java-2-616328447495.us-central1.run.app/plazas";
+            String externalUrl = "https://backend-service-java-2-616328447495.us-central1.run.app/api/plazas";
             
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
