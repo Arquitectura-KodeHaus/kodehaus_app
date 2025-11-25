@@ -5,12 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public record ExternalPlazaReq(
     @JsonProperty("externalId") String externalId,
     String name,
-    String email,
-    String address,
-    @JsonProperty("createdAt") String createdAt,
     String description,
-    @JsonProperty("isActive") String isActive,
+    String address,
     @JsonProperty("phoneNumber") String phoneNumber,
+    String email,
     @JsonProperty("openingHours") String openingHours,
     @JsonProperty("closingHours") String closingHours
 ) {}

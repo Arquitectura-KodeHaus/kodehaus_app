@@ -120,17 +120,15 @@ public class PlazaServiceImpl implements PlazaService {
             ExternalPlazaReq externalReq = new ExternalPlazaReq(
                 String.valueOf(savedPlaza.getId()),
                 savedPlaza.getNombre(),
-                email,
-                savedPlaza.getUbicacion().getDireccion(),
-                savedPlaza.getFechaCreacion().atStartOfDay().toString() + ":00Z", // ISO format approximation
                 "Creada desde Stocks Backend",
-                "true",
+                savedPlaza.getUbicacion().getDireccion(),
                 phoneNumber,
+                email,
                 "08:00",
                 "20:00"
             );
             
-            String externalUrl = "https://backend-service-java-2-616328447495.us-central1.run.app/api/plazas";
+            String externalUrl = "https://backend-service-java-2-616328447495.us-central1.run.app/api/plazas/externo";
             
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
