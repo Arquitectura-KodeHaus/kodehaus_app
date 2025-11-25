@@ -19,6 +19,7 @@ import com.kodehaus.stocksbackend.dto.CreateModuloReq;
 import com.kodehaus.stocksbackend.dto.ModuloDTO;
 import com.kodehaus.stocksbackend.dto.UpdateModuloReq;
 import com.kodehaus.stocksbackend.service.ModuloService;
+import com.kodehaus.stocksbackend.service.PlazaService;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -29,6 +30,9 @@ public class ModuloController {
 
     @Autowired
     private ModuloService moduloService;
+
+    @Autowired
+    private PlazaService plazaService;
 
     // --- 1. GET: Listar todos los módulos ---
     @GetMapping
@@ -75,6 +79,13 @@ public class ModuloController {
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    //Modulos de una plaza
+    @GetMapping("/plaza/{id}")
+    public ResponseEntity<List<ModuloDTO>> getModulos(@PathVariable Long id) {
+        List<ModuloDTO> modulos = plazaService.getModulos(id);
+        return ResponseEntity.ok(modulos);
     }
 }
 
