@@ -57,20 +57,18 @@ public class CuentaGerenteController {
         CuentaGerenteDTO newCuenta = cuentaService.create(datos);
 
         //Json enviado al otro servicio
-        String[] nameParts = newCuenta.nombre().split(" ");
-
         Map<String, Object> body = new HashMap<>();
-        body.put("username", nameParts[0] + 123);
+        body.put("username", newCuenta.correo());
         body.put("email", newCuenta.correo());
         body.put("password", newCuenta.password());
-        body.put("firstName", nameParts[0]);
-        body.put("lastName", nameParts[nameParts.length - 1]);
-        body.put("phoneNumber", "+1-555-0005");
-        body.put("plazaId",newCuenta.plaza_id());
-        body.put("roles", List.of("MANAGER"));
+        body.put("firstName", newCuenta.nombre());
+        body.put("lastName", "");
+        body.put("phoneNumber", "3008522478");
+        body.put("plazaId", newCuenta.plaza_id());
+        body.put("externalId", newCuenta.id());
 
         System.out.println("Informacion enviada: " + body);
-        restTemplate.postForObject("https://backend-service-java-2-616328447495.us-central1.run.app/api/users/externos", body, Void.class);
+        restTemplate.postForObject(gestionPlazasUrl + "/api/auth/external-register", body, Void.class);
 
         return new ResponseEntity<>(newCuenta, HttpStatus.CREATED); 
     } 
