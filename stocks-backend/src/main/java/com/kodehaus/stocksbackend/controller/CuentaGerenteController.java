@@ -56,22 +56,34 @@ public class CuentaGerenteController {
     public ResponseEntity<CuentaGerenteDTO> create(@RequestBody CuentaGerenteRequest datos) {
         CuentaGerenteDTO newCuenta = cuentaService.create(datos);
 
-        //Json enviado al otro servicio
-        String[] nameParts = newCuenta.nombre().split(" ");
+        // Partir el nombre
+        String nombre = newCuenta.nombre();
+        String[] nameParts = nombre.split(" ");
+        String firstName = nameParts[0];
 
+        // Construir JSON EXACTO que el otro servicio espera
         Map<String, Object> body = new HashMap<>();
-        body.put("username", nameParts[0] + 123);
+        body.put("externalId", String.valueOf(newCuenta.cedula()));   // lo ideal es usar la cédula como externalId
+        body.put("nombre", newCuenta.nombre());
         body.put("email", newCuenta.correo());
-        body.put("password", newCuenta.password());
-        body.put("firstName", nameParts[0]);
-        body.put("lastName", nameParts[nameParts.length - 1]);
+        body.put("rol", "MANAGER");                                   // corresponde con req.getRol()
+        
+        // IMPORTANTE: plazaExternalId debe coincidir con lo que el otro servicio guarda en la BD
+        body.put("plazaExternalId", String.valueOf(newCuenta.plaza_id())); 
+        
         body.put("phoneNumber", "+1-555-0005");
-        body.put("plazaId",newCuenta.plaza_id());
-        body.put("roles", List.of("MANAGER"));
 
-        System.out.println("Informacion enviada: " + body);
-        restTemplate.postForObject("https://backend-service-java-2-616328447495.us-central1.run.app/api/users/externos", body, Void.class);
+        System.out.println("JSON enviado al otro servicio: " + body);
 
-        return new ResponseEntity<>(newCuenta, HttpStatus.CREATED); 
-    } 
+        // Llamada al servicio java-0
+        restTemplate.postForObject(
+            "https://backend-service-java-2-616328447495.us-central1.run.app/api/users/externo",
+            //"http://localhost:8070/api/users/externo",
+            body,
+            Void.class
+        );
+
+        return new ResponseEntity<>(newCuenta, HttpStatus.CREATED);
+    }
+
 }
