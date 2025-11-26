@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -34,6 +35,8 @@ import jakarta.persistence.EntityNotFoundException;
 @Service
 public class PlazaServiceImpl implements PlazaService {
 
+    private final String gestionPlazasUrl;
+
     @Autowired
     private PlazaRepository plazaRepository;
     @Autowired
@@ -48,6 +51,10 @@ public class PlazaServiceImpl implements PlazaService {
     private ModuloMapper moduloMapper;
     @Autowired
     private RestTemplate restTemplate;
+
+    public PlazaServiceImpl(@Value("${gestion.plazas.url}") String gestionPlazasUrl) {
+        this.gestionPlazasUrl = gestionPlazasUrl;
+    }
 
     @Override
     public List<PlazaDTO> findAll() {
@@ -128,7 +135,7 @@ public class PlazaServiceImpl implements PlazaService {
                 "20:00"
             );
             
-            String externalUrl = "https://backend-service-java-2-616328447495.us-central1.run.app/api/plazas/externo";
+            String externalUrl = gestionPlazasUrl + "/api/plazas/externo";
             
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
