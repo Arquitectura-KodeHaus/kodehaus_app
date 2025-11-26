@@ -53,7 +53,14 @@ public class CuentaGerenteController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<CuentaGerenteDTO> create(@RequestBody CuentaGerenteRequest datos) {
+    public ResponseEntity<?> create(@RequestBody CuentaGerenteRequest datos) {
+        // Validar que la contraseña tenga al menos 6 caracteres
+        if (datos.password() == null || datos.password().length() < 6) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "La contraseña debe tener al menos 6 caracteres");
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
+
         CuentaGerenteDTO newCuenta = cuentaService.create(datos);
 
         // Partir el nombre
