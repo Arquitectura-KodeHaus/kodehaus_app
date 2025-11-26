@@ -27,10 +27,18 @@
 
   <!-- Loading y Error -->
   <div *ngIf="isLoading" class="loading">Cargando gerentes...</div>
-  <div *ngIf="error" class="error">{{ error }}</div>
 
-  <!-- Tabla de Gerentes -->
-  <table *ngIf="!isLoading && !error">
+  <!-- Mensaje de error compacto y acciones -->
+  <div *ngIf="error" class="error-compact">
+    <span class="error-text">{{ error }}</span>
+    <div class="error-actions">
+      <button class="btn-secondary" (click)="cargarGerentes()">Reintentar</button>
+      <button class="btn-link" (click)="cerrarError()">Cerrar</button>
+    </div>
+  </div>
+
+  <!-- Tabla de Gerentes (se muestra aunque exista un error, para evitar pantalla vacía) -->
+  <table *ngIf="!isLoading">
     <thead>
       <tr>
         <th>Nombre Completo</th>
@@ -38,6 +46,7 @@
         <th>Teléfono</th>
         <th>Identificación</th>
         <th>Plaza Asignada</th>
+        <th>Rol</th>
         <th>Estado</th>
         <th>Acciones</th>
       </tr>
@@ -49,6 +58,13 @@
         <td>{{ gerente.telefono }}</td>
         <td>{{ gerente.identificacion }}</td>
         <td>{{ gerente.nombrePlaza || 'Sin asignar' }}</td>
+        <td>
+          <select [(ngModel)]="gerente.rol" (change)="cambiarRol(gerente, gerente.rol)" class="rol-select">
+            <option value="admin">Admin</option>
+            <option value="gerente">Gerente</option>
+            <option value="supervisor">Supervisor</option>
+          </select>
+        </td>
         <td>
           <span class="badge" [ngClass]="getEstadoClass(gerente.estado)">
             {{ gerente.estado }}
@@ -73,7 +89,7 @@
         </td>
       </tr>
       <tr *ngIf="filtered.length === 0">
-        <td colspan="7" class="no-data">No se encontraron gerentes</td>
+        <td colspan="8" class="no-data">No se encontraron gerentes</td>
       </tr>
     </tbody>
   </table>

@@ -1,0 +1,5 @@
+.mapa { padding: 32px; color: #444; }
+.map-controls { margin: 8px 0 16px 0; }
+.plaza-list { display:flex; gap:8px; flex-wrap:wrap; }
+.plaza-list button { padding:6px 10px; border-radius:6px; border:1px solid #ccc; background:#fff; cursor:pointer }
+.plaza-list button.active { background:#2c7be5; color:#fff; border-color:#1a5fd6 }

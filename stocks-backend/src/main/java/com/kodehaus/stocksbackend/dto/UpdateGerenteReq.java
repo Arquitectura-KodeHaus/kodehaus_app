@@ -12,4 +12,5 @@ public class UpdateGerenteReq {
     private String telefono;
     private String estado;
     private Long idPlaza;
+    private String rol;
 }

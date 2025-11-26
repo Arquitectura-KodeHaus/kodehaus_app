@@ -18,6 +18,7 @@ public class GerenteMapper {
         dto.setTelefono(gerente.getTelefono());
         dto.setIdentificacion(gerente.getIdentificacion());
         dto.setEstado(gerente.getEstado());
+        dto.setRol(gerente.getRol());
         dto.setFechaCreacion(gerente.getFechaCreacion());
         dto.setFechaUltimaActualizacion(gerente.getFechaUltimaActualizacion());
         

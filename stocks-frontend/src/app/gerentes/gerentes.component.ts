@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GerentesService } from '../services/gerentes.service';
+import { EventosService } from '../services/eventos.service';
 import { PlazaService, Plaza } from '../services/plaza.service';
 import { Gerente, CreateGerenteRequest, UpdateGerenteRequest } from '../models/gerente';
 
@@ -34,6 +35,7 @@ export class GerentesComponent implements OnInit {
     password: '',
     telefono: '',
     identificacion: '',
+    rol: 'gerente',
     idPlaza: undefined
   };
 
@@ -43,7 +45,8 @@ export class GerentesComponent implements OnInit {
 
   constructor(
     private gerentesService: GerentesService,
-    private plazaService: PlazaService
+    private plazaService: PlazaService,
+    private eventosService: EventosService
   ) {}
 
   ngOnInit(): void {
@@ -73,11 +76,22 @@ export class GerentesComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
-        this.error = 'Error al cargar gerentes: ' + (err.error?.message || err.message);
+        // Mostrar un mensaje amigable sin revelar la URL del backend
+        this.error = 'No se pudo cargar la lista de gerentes. Verifica la conexión con el servidor e inténtalo más tarde.';
         this.isLoading = false;
-        console.error('Error:', err);
+        console.error('Error al cargar gerentes:', err);
+        try {
+          this.eventosService.agregarNotificacion('Error al cargar gerentes: servidor inaccesible', 'alerta');
+        } catch (e) { /* ignore */ }
       }
     });
+  }
+
+  /**
+   * Permite cerrar manualmente el mensaje de error para limpiar la UI
+   */
+  cerrarError(): void {
+    this.error = '';
   }
 
   applyFilters(): void {
@@ -113,6 +127,7 @@ export class GerentesComponent implements OnInit {
       password: '',
       telefono: '',
       identificacion: '',
+      rol: 'gerente',
       idPlaza: undefined
     };
     this.modalAbierto = true;
@@ -128,6 +143,7 @@ export class GerentesComponent implements OnInit {
       password: '', // No se muestra ni edita
       telefono: gerente.telefono,
       identificacion: gerente.identificacion,
+      rol: gerente.rol || 'gerente',
       idPlaza: gerente.idPlaza
     };
     this.modalAbierto = true;
@@ -145,17 +161,20 @@ export class GerentesComponent implements OnInit {
         nombre: this.formulario.nombre,
         apellido: this.formulario.apellido,
         telefono: this.formulario.telefono,
-        idPlaza: this.formulario.idPlaza
+        idPlaza: this.formulario.idPlaza,
+        rol: this.formulario.rol // Agregar rol al updateData
       };
 
       this.gerentesService.update(this.gerenteSeleccionado.id!, updateData).subscribe({
         next: () => {
+          this.eventosService.registrarEvento('admin', `Actualizó gerente: ${this.formulario.nombre}`);
+          this.eventosService.agregarNotificacion(`Gerente ${this.formulario.nombre} actualizado`, 'info');
           this.cerrarModal();
           this.cargarGerentes();
-          alert('Gerente actualizado exitosamente');
         },
         error: (err) => {
-          alert('Error al actualizar: ' + (err.error?.error || err.message));
+          this.eventosService.agregarNotificacion('Error al actualizar gerente', 'alerta');
+          console.error('Error al actualizar gerente:', err);
           console.error('Error:', err);
         }
       });
@@ -163,18 +182,25 @@ export class GerentesComponent implements OnInit {
       // Crear
       this.gerentesService.create(this.formulario).subscribe({
         next: () => {
+          this.eventosService.registrarEvento('admin', `Creó gerente: ${this.formulario.nombre}`);
+          this.eventosService.agregarNotificacion(`Gerente ${this.formulario.nombre} creado`, 'info');
           this.cerrarModal();
           this.cargarGerentes();
-          alert('Gerente creado exitosamente');
         },
         error: (err) => {
-          alert('Error al crear: ' + (err.error?.error || err.message));
+          this.eventosService.agregarNotificacion('Error al crear gerente', 'alerta');
+          console.error('Error al crear gerente:', err);
           console.error('Error:', err);
         }
       });
     }
   }
 
+  cambiarRol(gerente: Gerente, nuevoRol: 'admin' | 'gerente' | 'supervisor') {
+    // Aquí iría la llamada al backend para actualizar el rol
+    gerente.rol = nuevoRol;
+    // TODO: Llamar a gerentesService.update(gerente.id, { rol: nuevoRol })
+  }
   verDetalle(gerente: Gerente): void {
     this.gerenteDetalle = gerente;
     this.modalDetalleAbierto = true;
@@ -190,10 +216,11 @@ export class GerentesComponent implements OnInit {
       this.gerentesService.cambiarEstado(gerente.id!, nuevoEstado).subscribe({
         next: () => {
           this.cargarGerentes();
-          alert('Estado actualizado exitosamente');
+          this.eventosService.agregarNotificacion('Estado actualizado exitosamente', 'info');
         },
         error: (err) => {
-          alert('Error al cambiar estado: ' + (err.error?.error || err.message));
+          this.eventosService.agregarNotificacion('Error al cambiar estado del gerente', 'alerta');
+          console.error('Error al cambiar estado:', err);
           console.error('Error:', err);
         }
       });
@@ -204,11 +231,13 @@ export class GerentesComponent implements OnInit {
     if (confirm(`¿Está seguro de eliminar al gerente ${gerente.nombre} ${gerente.apellido}?`)) {
       this.gerentesService.delete(gerente.id!).subscribe({
         next: () => {
+          this.eventosService.registrarEvento('admin', `Eliminó gerente: ${gerente.nombre}`);
+          this.eventosService.agregarNotificacion(`Gerente ${gerente.nombre} eliminado`, 'alerta');
           this.cargarGerentes();
-          alert('Gerente eliminado exitosamente');
         },
         error: (err) => {
-          alert('Error al eliminar: ' + (err.error?.error || err.message));
+          this.eventosService.agregarNotificacion('Error al eliminar gerente', 'alerta');
+          console.error('Error al eliminar gerente:', err);
           console.error('Error:', err);
         }
       });

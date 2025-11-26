@@ -199,6 +199,43 @@ tbody tr:hover {
   margin-bottom: 16px;
 }
 
+.error-compact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #742a2a;
+  background: #fff5f5;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border-left: 4px solid #e53e3e;
+  margin-bottom: 16px;
+}
+
+.error-text {
+  flex: 1 1 auto;
+  font-size: 14px;
+}
+
+.error-actions {
+  display: flex;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.btn-link {
+  background: transparent;
+  border: none;
+  color: #2b6cb0;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+.btn-link:hover {
+  background: rgba(43, 108, 176, 0.08);
+}
+
 /* Modal */
 .modal-backdrop {
   position: fixed;

@@ -1,0 +1,13 @@
+<h2>Notificaciones</h2>
+<div *ngIf="notificaciones.length; else vacio">
+  <ul>
+    <li *ngFor="let n of notificaciones" [ngClass]="{'alerta': n.tipo === 'alerta', 'info': n.tipo === 'info'}">
+      <span *ngIf="n.tipo === 'alerta'" style="color:red">&#9888;</span>
+      <span *ngIf="n.tipo === 'info'" style="color:blue">&#9432;</span>
+      {{ n.mensaje }}
+    </li>
+  </ul>
+</div>
+<ng-template #vacio>
+  <p>No hay notificaciones.</p>
+</ng-template>

@@ -36,6 +36,9 @@ public class Gerente {
     @Column(nullable = false)
     private String estado; // ACTIVO, INACTIVO, SUSPENDIDO
 
+    @Column(nullable = false)
+    private String rol; // admin, gerente, supervisor
+
     @Column(name = "fecha_creacion", nullable = false)
     private LocalDateTime fechaCreacion;
 
@@ -51,6 +54,9 @@ public class Gerente {
         fechaCreacion = LocalDateTime.now();
         if (estado == null) {
             estado = "ACTIVO";
+        }
+        if (rol == null) {
+            rol = "gerente";
         }
     }
 

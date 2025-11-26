@@ -1,0 +1,73 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header" style="position: relative;">
+      <button class="btn-home-top" (click)="irAlHome()">Ir al Home</button>
+      <div class="logo">🏢</div>
+      <h1>PlazApp Admin</h1>
+      <p>Ingrese sus credenciales</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+          type="email" 
+          id="email"
+          [(ngModel)]="email" 
+          name="email"
+          placeholder="gerente@plazapp.com"
+          required
+          [disabled]="isLoading"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <input 
+          type="password" 
+          id="password"
+          [(ngModel)]="password" 
+          name="password"
+          placeholder="••••••••"
+          required
+          [disabled]="isLoading"
+        />
+      </div>
+
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
+      <button 
+        type="submit" 
+        class="btn-login"
+        [disabled]="isLoading"
+      >
+        <span *ngIf="!isLoading">Iniciar Sesión</span>
+        <span *ngIf="isLoading">Verificando...</span>
+      </button>
+
+      <div class="register-link">
+        <p>¿No tienes cuenta? <a (click)="irARegistro()">Regístrate aquí</a></p>
+      </div>
+    </form>
+
+
+    <div class="login-footer">
+      <p>Sistema de Gestión de Plazas de Mercado</p>
+    </div>
+  </div>
+</div>
+
+<!-- Upload panel: visible only on login -->
+<div class="login-upload" style="max-width:880px;margin:16px auto;padding:12px;border-radius:8px;background:#f8fafc;border:1px solid #e6eef9">
+  <label for="archivoIdentidad"><strong>Sube tu documento de identidad/carnet (PDF, imagen o Word):</strong></label>
+  <input type="file" id="archivoIdentidad" (change)="onArchivoSeleccionado($event)" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" />
+  <button class="btn-subir" (click)="subirArchivo()" [disabled]="!archivoSeleccionado || archivoSubiendo" style="margin-left:10px;">Subir archivo</button>
+  <div class="archivo-info">
+    <small>Solo se permiten archivos PDF, imágenes (.jpg, .jpeg, .png) y Word (.doc, .docx). Otros archivos serán rechazados.</small>
+  </div>
+  <div *ngIf="archivoError" class="archivo-error">{{ archivoError }}</div>
+  <div *ngIf="archivoNombre" class="archivo-nombre">Archivo seleccionado: {{ archivoNombre }}</div>
+  <div *ngIf="archivoExito" class="archivo-exito">{{ archivoExito }}</div>
+</div>

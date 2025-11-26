@@ -1,0 +1,11 @@
+<h2>Historial de acciones</h2>
+<div *ngIf="historial.length; else vacio">
+  <ul>
+    <li *ngFor="let evento of historial">
+      <strong>{{ evento.usuario }}</strong> - {{ evento.accion }} <span style="color:gray">({{ evento.fecha }})</span>
+    </li>
+  </ul>
+</div>
+<ng-template #vacio>
+  <p>No hay acciones registradas.</p>
+</ng-template>

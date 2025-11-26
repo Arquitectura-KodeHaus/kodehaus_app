@@ -1,0 +1,121 @@
+<div class="register-container">
+  <div class="register-card">
+    <div class="register-header">
+      <div class="logo">🏢</div>
+      <h1>PlazApp Admin</h1>
+      <p>Crear nueva cuenta</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" class="register-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="nombre">Nombre *</label>
+          <input 
+            type="text" 
+            id="nombre"
+            [(ngModel)]="formulario.nombre" 
+            name="nombre"
+            placeholder="Juan"
+            required
+            [disabled]="isLoading"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="apellido">Apellido *</label>
+          <input 
+            type="text" 
+            id="apellido"
+            [(ngModel)]="formulario.apellido" 
+            name="apellido"
+            placeholder="Pérez"
+            required
+            [disabled]="isLoading"
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email *</label>
+        <input 
+          type="email" 
+          id="email"
+          [(ngModel)]="formulario.email" 
+          name="email"
+          placeholder="gerente@plazapp.com"
+          required
+          [disabled]="isLoading"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Contraseña *</label>
+        <input 
+          type="password" 
+          id="password"
+          [(ngModel)]="formulario.password" 
+          name="password"
+          placeholder="Mínimo 6 caracteres"
+          required
+          [disabled]="isLoading"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="telefono">Teléfono *</label>
+        <input 
+          type="tel" 
+          id="telefono"
+          [(ngModel)]="formulario.telefono" 
+          name="telefono"
+          placeholder="+57 300 123 4567"
+          required
+          [disabled]="isLoading"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="identificacion">Identificación *</label>
+        <input 
+          type="text" 
+          id="identificacion"
+          [(ngModel)]="formulario.identificacion" 
+          name="identificacion"
+          placeholder="1234567890"
+          required
+          [disabled]="isLoading"
+        />
+      </div>
+
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
+      <div *ngIf="successMessage" class="success-message">
+        {{ successMessage }}
+      </div>
+
+      <button 
+        type="submit" 
+        class="btn-register"
+        [disabled]="isLoading"
+      >
+        <span *ngIf="!isLoading">Crear Cuenta</span>
+        <span *ngIf="isLoading">Creando...</span>
+      </button>
+
+      <button 
+        type="button" 
+        class="btn-back"
+        (click)="volverAlLogin()"
+        [disabled]="isLoading"
+      >
+        ← Volver al Login
+      </button>
+    </form>
+
+    <div class="register-footer">
+      <p>Sistema de Gestión de Plazas de Mercado</p>
+    </div>
+  </div>
+</div>

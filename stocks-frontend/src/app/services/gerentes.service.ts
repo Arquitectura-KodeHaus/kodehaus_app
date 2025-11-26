@@ -6,6 +6,14 @@ import { Gerente, CreateGerenteRequest, UpdateGerenteRequest } from '../models/g
 
 @Injectable({ providedIn: 'root' })
 export class GerentesService {
+    /**
+     * Subir documento de identidad/carnet
+     */
+    uploadDocumento(file: File): Observable<any> {
+      const formData = new FormData();
+      formData.append('documento', file);
+      return this.http.post(`${this.baseUrl}/upload-doc`, formData);
+    }
   private readonly baseUrl = `${environment.apiUrl}/api/gerentes`;
 
   constructor(private http: HttpClient) {}

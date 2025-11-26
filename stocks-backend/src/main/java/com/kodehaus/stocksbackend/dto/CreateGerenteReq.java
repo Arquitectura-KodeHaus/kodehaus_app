@@ -14,4 +14,5 @@ public class CreateGerenteReq {
     private String telefono;
     private String identificacion;
     private Long idPlaza; // Opcional: puede asignarse después
+    private String rol;
 }

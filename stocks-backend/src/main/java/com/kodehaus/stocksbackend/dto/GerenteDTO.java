@@ -16,6 +16,7 @@ public class GerenteDTO {
     private String telefono;
     private String identificacion;
     private String estado;
+    private String rol;
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaUltimaActualizacion;
     private Long idPlaza;

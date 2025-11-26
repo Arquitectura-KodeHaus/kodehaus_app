@@ -1,0 +1,3 @@
+.notificaciones { padding: 32px; color: #444; }
+.notificaciones button { padding:6px 8px;border-radius:6px;border:1px solid #ddd;background:transparent;cursor:pointer }
+.notificaciones button:hover { opacity:0.9 }
